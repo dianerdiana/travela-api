@@ -1,0 +1,159 @@
+Table users {
+  id int [pk, increment]
+  fullname varchar(255)
+  username varchar(100) [unique]
+  email varchar(255) [unique]
+  password varchar(255)
+  phone varchar(15)
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  last_login timestamp 
+}
+
+Table categories {
+  id int [pk, increment]
+  name varchar(100)
+  icon varchar(255)
+  slug varchar(100) [unique]
+}
+
+Table package_tours {
+  id int [pk, increment]
+  name varchar(255)
+  slug varchar(100) [unique]
+  thumbnail varchar(255)
+  price decimal(10,2)
+  days int
+  is_recommended bool [default: false]
+  city varchar(100)
+  province varchar(100)
+  country varchar(100)
+  about text
+  created_by int
+  updated_by int
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  rating decimal(2,1) [default: 0.0]
+}
+
+Ref: users.id < package_tours.created_by [delete: cascade, update: cascade]
+Ref: users.id < package_tours.updated_by [delete: cascade, update: cascade]
+
+Table package_tour_categories {
+  category_id int
+  package_tour_id int
+
+  indexes {
+    (category_id, package_tour_id) [pk]
+  }
+}
+
+Ref: categories.id <> package_tour_categories.category_id [delete: cascade, update: cascade]
+Ref: package_tours.id <> package_tour_categories.package_tour_id [delete: cascade, update: cascade]
+
+Table package_photos {
+  id int [pk, increment]
+  package_tour_id int
+  photo varchar(255)
+}
+
+Ref: package_tours.id < package_photos.package_tour_id [delete: cascade, update: cascade]
+
+Table package_banks {
+  id int [pk, increment]
+  bank_name varchar(100)
+  bank_account_name varchar(255)
+  bank_account_number varchar(20)
+  bank_logo varchar(255)
+}
+
+Table package_bookings {
+  id int [pk, increment]
+  user_id int
+  package_tour_id int
+  package_bank_id int
+  quantity int
+  start_date timestamp
+  end_date timestamp
+  is_paid bool [default: false]
+  total_amount decimal(10,2)
+  payment_proof varchar(255)
+  sub_total decimal(10,2)
+  insurance decimal(10,2)
+  tax decimal(10,2)
+  status booking_status [default: `booking_status.pending`]
+  created_at timestamp [default: `now()`]
+  confirmed_paid_at timestamp
+}
+
+Ref: users.id < package_bookings.user_id [delete: null, update: cascade]
+Ref: package_tours.id < package_bookings.package_tour_id [delete: cascade, update: cascade]
+Ref: package_banks.id < package_bookings.package_bank_id [delete: null, update: cascade]
+
+Table roles {
+  id int [pk, increment]
+  name varchar(100)
+  description varchar(255)
+}
+
+Table permissions {
+  id int [pk, increment]
+  name varchar(100)
+  action varchar(100)
+  subject varchar(100)
+  conditions varchar(255)
+  inverted bool [default: false]
+  reason varchar(255)
+}
+
+Table user_roles {
+  user_id int
+  role_id int
+
+  indexes {
+    (user_id, role_id) [pk]
+  }
+}
+
+Ref: users.id <> user_roles.user_id [delete: cascade, update: cascade]
+Ref: roles.id <> user_roles.role_id [delete: cascade, update: cascade]
+
+Table role_permissions {
+  role_id int
+  permission_id int
+
+  indexes {
+    (role_id, permission_id) [pk]
+  }
+}
+
+Ref: roles.id <> role_permissions.role_id [delete: cascade, update: cascade]
+Ref: permissions.id <> role_permissions.permission_id [delete: cascade, update: cascade]
+
+Table package_reviews {
+  id int [pk, increment]
+  user_id int
+  package_tour_id int
+  rating int [note: 'Rating scale: 1-5']
+  comment text
+  created_at timestamp [default: `now()`]
+
+  indexes {
+    (user_id, package_tour_id) [unique]
+  }
+}
+
+Ref: users.id < package_reviews.user_id [delete: cascade, update: cascade]
+Ref: package_tours.id < package_reviews.package_tour_id [delete: cascade, update: cascade]
+
+Table transaction_audit_trail {
+  id int [pk, increment]
+  package_booking_id int
+  action varchar(50) 
+  performed_by int
+  performed_at timestamp [default: `now()`]
+  details text // JSON or text to store detailed changes
+}
+
+Ref: package_bookings.id < transaction_audit_trail.package_booking_id [delete: cascade, update: cascade]
+Ref: users.id < transaction_audit_trail.performed_by [delete: null, update: cascade]

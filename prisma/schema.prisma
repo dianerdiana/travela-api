@@ -1,0 +1,177 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int                 @id @default(autoincrement())
+  fullname  String              @db.VarChar(255)
+  username  String              @unique @db.VarChar(100)
+  email     String              @unique @db.VarChar(255)
+  password  String              @db.VarChar(255)
+  phone     String?             @db.VarChar(15)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime?           
+  lastLogin DateTime?           
+  createdTours PackageTour[]    @relation("createdTours")
+  updatedTours PackageTour[]    @relation("updatedTours")
+  bookings  PackageBooking[]
+  reviews   PackageReview[]
+  roles     UserRole[]
+  performedTransactions TransactionAuditTrail[]
+}
+
+model Category {
+  id    Int                    @id @default(autoincrement())
+  name  String                 @db.VarChar(100)
+  icon  String?                @db.VarChar(255)
+  slug  String                 @unique @db.VarChar(100)
+  tours PackageTourCategory[]
+}
+
+model PackageTour {
+  id           Int                      @id @default(autoincrement())
+  name         String                   @db.VarChar(255)
+  slug         String                   @unique @db.VarChar(100)
+  thumbnail    String?                  @db.VarChar(255)
+  price        Decimal                  @db.Decimal(10, 2)
+  days         Int
+  isRecommended Boolean                 @default(false)
+  city         String?                  @db.VarChar(100)
+  province     String?                  @db.VarChar(100)
+  country      String?                  @db.VarChar(100)
+  about        String?                  @db.Text
+  createdBy    Int
+  updatedBy    Int?
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime?                
+  rating       Decimal                  @default(0.0) @db.Decimal(2, 1)
+  categories   PackageTourCategory[]
+  photos       PackagePhoto[]
+  bookings     PackageBooking[]
+  reviews      PackageReview[]
+  createdByUser User                    @relation("createdTours", fields: [createdBy], references: [id])
+  updatedByUser User?                   @relation("updatedTours", fields: [updatedBy], references: [id])
+}
+
+model PackageTourCategory {
+  categoryId   Int
+  packageTourId Int
+
+  category     Category                @relation(fields: [categoryId], references: [id])
+  packageTour  PackageTour             @relation(fields: [packageTourId], references: [id])
+
+  @@id([categoryId, packageTourId])
+}
+
+model PackagePhoto {
+  id            Int                    @id @default(autoincrement())
+  packageTourId Int
+  photo         String                 @db.VarChar(255)
+  packageTour   PackageTour            @relation(fields: [packageTourId], references: [id])
+}
+
+model PackageBank {
+  id               Int                 @id @default(autoincrement())
+  bankName         String              @db.VarChar(100)
+  bankAccountName  String              @db.VarChar(255)
+  bankAccountNumber String             @db.VarChar(20)
+  bankLogo         String?             @db.VarChar(255)
+  bookings         PackageBooking[]
+}
+
+model PackageBooking {
+  id            Int                   @id @default(autoincrement())
+  userId        Int
+  packageTourId Int
+  packageBankId Int?
+  quantity      Int
+  startDate     DateTime              
+  endDate       DateTime              
+  isPaid        Boolean               @default(false) 
+  totalAmount   Decimal               @db.Decimal(10, 2)
+  paymentProof  String?               @db.VarChar(255)
+  subTotal      Decimal               @db.Decimal(10, 2)
+  insurance     Decimal               @db.Decimal(10, 2)
+  tax           Decimal               @db.Decimal(10, 2)
+  status        String                @db.VarChar(50) @default("pending")
+  createdAt     DateTime              @default(now())
+  confirmedPaidAt DateTime?           
+  user          User                  @relation(fields: [userId], references: [id])
+  packageTour   PackageTour           @relation(fields: [packageTourId], references: [id])
+  packageBank   PackageBank?          @relation(fields: [packageBankId], references: [id])
+  transactions  TransactionAuditTrail[]
+}
+
+model Role {
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(100)
+  description String?    @db.VarChar(255)
+  userRoles   UserRole[]
+  rolePermissions RolePermission[]
+}
+
+model Permission {
+  id         Int            @id @default(autoincrement())
+  name       String         @db.VarChar(100)
+  action     String         @db.VarChar(100)
+  subject    String         @db.VarChar(100)
+  conditions String?        @db.VarChar(255)
+  inverted   Boolean        @default(false)
+  reason     String?        @db.VarChar(255)
+  rolePermissions RolePermission[]
+}
+
+model UserRole {
+  userId Int
+  roleId Int
+
+  user   User        @relation(fields: [userId], references: [id])
+  role   Role        @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+
+  role         Role         @relation(fields: [roleId], references: [id])
+  permission   Permission   @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+}
+
+model PackageReview {
+  id           Int         @id @default(autoincrement())
+  userId       Int
+  packageTourId Int
+  rating       Int         @map("Rating scale: 1-5")
+  comment      String?     @db.Text
+  createdAt    DateTime    @default(now())
+  user         User        @relation(fields: [userId], references: [id])
+  packageTour  PackageTour @relation(fields: [packageTourId], references: [id])
+
+  @@unique([userId, packageTourId])
+}
+
+model TransactionAuditTrail {
+  id              Int         @id @default(autoincrement())
+  packageBookingId Int
+  action          String      @db.VarChar(50)
+  performedBy     Int?
+  performedAt     DateTime    @default(now())
+  details         String?     @db.Text
+  packageBooking  PackageBooking @relation(fields: [packageBookingId], references: [id])
+  performedByUser User?        @relation(fields: [performedBy], references: [id])
+}
