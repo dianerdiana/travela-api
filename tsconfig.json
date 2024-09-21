@@ -9,7 +9,8 @@
     "paths": {
       "@config/*": ["src/config/*"],
       "@services/*": ["src/services/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@errors/*": ["src/errors/*"]
     }
   },
   "exclude": ["node_modules"],
