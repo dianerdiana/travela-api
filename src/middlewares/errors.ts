@@ -1,5 +1,6 @@
 import { AppError } from "@errors/AppError";
 import { NextFunction, Request, Response } from "express";
+import logger from "logger";
 import { ZodError } from "zod";
 
 export const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -26,7 +27,7 @@ export const errorMiddleware = (err: Error, req: Request, res: Response, next: N
     }
   }
 
-  console.error("Unexpected Error: ", err);
+  logger.error("Unexpected Error: ", err);
   return res.status(500).json({
     error: true,
     status: "error",

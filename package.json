@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "dev": "nodemon --exec \"node -r esbuild-register ./src/index.ts\" -e .ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "lint": "tsc --noEmit && eslint \"src/**/*.ts*\" --max-warnings 0",
     "start": "node -r esbuild-register ./src/index.ts",
     "test": "jest --detectOpenHandles"
@@ -27,6 +27,7 @@
     "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "tsconfig-paths": "^4.2.0",
     "winston": "^3.14.2",
     "zod": "^3.23.8"
   },
@@ -45,6 +46,7 @@
     "nodemon": "^3.1.0",
     "prisma": "^5.19.0",
     "supertest": "^6.3.3",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.3"
   }
 }
