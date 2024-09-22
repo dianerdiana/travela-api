@@ -1,7 +1,7 @@
 import { AppError } from "./AppError";
 
 export class UnauthorizedError extends AppError {
-  private static readonly _statusCode: 401;
+  private static readonly _statusCode = 401;
   readonly statusCode: number;
   readonly isOperational: boolean;
 

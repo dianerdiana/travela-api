@@ -1,7 +1,7 @@
 import { AppError } from "./AppError";
 
 export class NotFoundError extends AppError {
-  private static readonly _statusCode: 404;
+  private static readonly _statusCode = 404;
   readonly statusCode: number;
   readonly isOperational: boolean;
 

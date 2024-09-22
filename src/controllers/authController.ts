@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { RegisterInput } from "@schemas/authSchemas";
+import { LoginInput, RegisterInput } from "@schemas/authSchemas";
 import { authService } from "@services/authService";
 import { successResponse } from "@utils/successResponse";
 import { BadRequestError } from "@errors/BadRequestError";
@@ -18,10 +18,9 @@ export const authController = {
         ...req.body,
         avatar: `${UPLOADS_DIR}/${req.file.filename}`,
       };
-      console.log({ registerInput });
       const newUser = await authService.register(registerInput);
 
-      res.status(200).json(successResponse(newUser));
+      res.status(201).json(successResponse(newUser));
     } catch (error) {
       if (req.file?.filename) {
         fs.unlink(path.join(__dirname, `../..${UPLOADS_DIR}/${req.file.filename}`), (err) => {
@@ -30,6 +29,16 @@ export const authController = {
           }
         });
       }
+      next(error);
+    }
+  },
+  login: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const loginInput: LoginInput = req.body;
+      const user = await authService.login(loginInput);
+
+      res.status(200).json(successResponse(user));
+    } catch (error) {
       next(error);
     }
   },
