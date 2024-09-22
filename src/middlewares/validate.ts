@@ -1,4 +1,3 @@
-import { BadRequestError } from "@errors/BadRequestError";
 import { NextFunction, Request, Response } from "express";
 import { ZodSchema } from "zod";
 

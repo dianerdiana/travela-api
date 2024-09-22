@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 import { errorMiddleware } from "./middlewares/error";
 import { ApiRoutes } from "./routes/api";
+import path from "path";
 
 export const createServer = (): Express => {
   const app = express();
@@ -13,6 +14,8 @@ export const createServer = (): Express => {
     .use(urlencoded({ extended: true }))
     .use(json())
     .use(cors())
+    .use(express.static(path.join(__dirname, "public")))
+    .use(express.static(path.join(__dirname, "uploads")))
     .get("/status", (_, res) => {
       return res.json({ ok: true });
     })

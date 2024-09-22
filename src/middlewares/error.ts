@@ -2,6 +2,7 @@ import { AppError } from "@errors/AppError";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import logger from "../logger";
+import { Prisma } from "@prisma/client";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorMiddleware = (error: Error, req: Request, res: Response, next: NextFunction) => {
@@ -27,6 +28,19 @@ export const errorMiddleware = (error: Error, req: Request, res: Response, next:
         error: true,
         status: "error",
         message: error.message,
+      });
+    }
+  }
+
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error.code === "P2002") {
+      console.error("Unique constraint error: ", error);
+
+      const fieldName = error.meta?.target;
+      return res.status(500).json({
+        error: true,
+        status: "error",
+        message: `${fieldName} is already registered.`,
       });
     }
   }

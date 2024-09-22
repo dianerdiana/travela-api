@@ -18,6 +18,7 @@
       "@src/*": ["/*"],
       "@config/*": ["config/*"],
       "@services/*": ["services/*"],
+      "@middlewares/*": ["middlewares/*"],
       "@utils/*": ["utils/*"],
       "@errors/*": ["errors/*"],
       "@schemas/*": ["schemas/*"],
