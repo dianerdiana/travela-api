@@ -1,14 +1,16 @@
 import { AppError } from "@errors/AppError";
 import { NextFunction, Request, Response } from "express";
-import logger from "logger";
 import { ZodError } from "zod";
+import logger from "../logger";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ZodError) {
     const errorMessages = err.errors.map(
       (issue: any) => `${issue.path.join(".")} is ${issue.message}`
     );
 
+    logger.error(errorMessages);
     return res.status(400).json({
       error: true,
       status: "error",
