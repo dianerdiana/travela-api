@@ -1,22 +1,18 @@
 import supertest from "supertest";
 import { createServer } from "../src/server";
 
-describe("server", () => {
+describe("Authentication", () => {
   it("status check returns 200", async () => {
-    await supertest(createServer())
-      .get("/status")
-      .expect(200)
-      .then((res) => {
-        expect(res.body.ok).toBe(true);
-      });
-  });
+    const userData = {
+      avatar: "",
+      fullName: "A",
+    };
 
-  it("message endpoint says hello", async () => {
     await supertest(createServer())
-      .get("/message/jared")
-      .expect(200)
+      .post("/register")
+      .send(userData)
       .then((res) => {
-        expect(res.body.message).toBe("hello jared");
+        expect(res.status).toBe(201);
       });
   });
 });

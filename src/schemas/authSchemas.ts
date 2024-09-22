@@ -7,12 +7,14 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
-    avatar: z.string(),
-    fullName: z.string(),
-    phone: z.string(),
-    email: z.string().email(),
-    password: z.string().min(6),
-    confirmPassword: z.string(),
+    avatar: z.string({ required_error: "Avatar is required." }),
+    fullName: z.string({ required_error: "Full Name is required." }),
+    phone: z.string({ required_error: "Phone Number is required." }),
+    email: z.string({ required_error: "Email is required." }).email("Email is not valid."),
+    password: z
+      .string({ required_error: "Password is required" })
+      .min(6, "Password length at least must be 6."),
+    confirmPassword: z.string({ required_error: "Confirm Password is required" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],

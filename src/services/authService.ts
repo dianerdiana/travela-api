@@ -5,7 +5,7 @@ import { RegisterInput } from "@schemas/authSchemas";
 export const authService = {
   register: async ({ avatar, email, fullName, phone, password }: RegisterInput) => {
     const hashedPassword = await hashPassword(password);
-    const newUser = db.user.create({
+    const newUser = await db.user.create({
       data: {
         avatar,
         email,

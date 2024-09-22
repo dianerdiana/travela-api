@@ -1,8 +1,13 @@
+import { BadRequestError } from "@errors/BadRequestError";
 import { NextFunction, Request, Response } from "express";
 import { ZodSchema } from "zod";
 
 export const validate =
-  (schema: ZodSchema) => (req: Request, Res: Response, next: NextFunction) => {
-    schema.parse(req.body);
-    next();
+  (schema: ZodSchema) => async (req: Request, Res: Response, next: NextFunction) => {
+    try {
+      await schema.parse(req.body);
+      next();
+    } catch (error) {
+      next(error);
+    }
   };
