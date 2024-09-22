@@ -44,6 +44,5 @@ const multerConfig = (storage: StorageEngine, maxSize: number) =>
 export const uploadSingleImage = (fieldName: string, folderName?: string) => {
   const UPLOADS_DIR = getUploadDir(folderName);
 
-  console.log({ UPLOADS_DIR });
   return multerConfig(createStorage(UPLOADS_DIR), maxSize).single(fieldName);
 };

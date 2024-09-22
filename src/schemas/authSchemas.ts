@@ -7,7 +7,6 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
-    avatar: z.string({ required_error: "Avatar is required." }).optional(),
     fullName: z.string({ required_error: "Full Name is required." }),
     phone: z.string({ required_error: "Phone Number is required." }),
     email: z.string({ required_error: "Email is required." }).email("Email is not valid."),
@@ -22,4 +21,4 @@ export const registerSchema = z
   });
 
 export type LoginInput = z.infer<typeof loginSchema>;
-export type RegisterInput = z.infer<typeof registerSchema>;
+export type RegisterInput = z.infer<typeof registerSchema> & { avatar: string };
