@@ -13,10 +13,10 @@ export const errorMiddleware = (error: Error, req: Request, res: Response, next:
     }));
 
     logger.error(errorMessages);
-    return res.status(400).json({
+    return res.status(405).json({
       error: true,
       status: "error",
-      message: "Invalid Data",
+      message: "Invalid Input",
       details: errorMessages,
     });
   }
