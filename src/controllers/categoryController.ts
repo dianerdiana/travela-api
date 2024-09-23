@@ -13,8 +13,8 @@ export const categoryController = {
       const createCategoryInput: CreateCategoryInput = req.body;
       const icon = req.file ? `${UPLOADS_DIR}/${req.file.filename}` : null;
 
-      await categoryService.createCategory({ ...createCategoryInput, icon });
-      res.status(201).json(successResponse("Category created successfuly."));
+      const newCategory = await categoryService.createCategory({ ...createCategoryInput, icon });
+      res.status(201).json(successResponse("Category created successfuly.", newCategory));
     } catch (error) {
       if (req.file?.filename) {
         fs.unlink(path.join(__dirname, `../..${UPLOADS_DIR}/${req.file.filename}`), (err) => {
@@ -23,6 +23,16 @@ export const categoryController = {
           }
         });
       }
+      next(error);
+    }
+  },
+  getCategory: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { slug } = req.params;
+
+      const category = await categoryService.getCategory(slug);
+      res.status(200).json(successResponse("Success", category));
+    } catch (error) {
       next(error);
     }
   },

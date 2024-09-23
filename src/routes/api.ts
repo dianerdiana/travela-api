@@ -4,7 +4,7 @@ import { categoryRoutes } from "./categoryRoutes";
 
 const router = express.Router();
 
-router.use("/", authRoutes);
+router.use("/auth", authRoutes);
 router.use("/categories", categoryRoutes);
 
 export const ApiRoutes = router;

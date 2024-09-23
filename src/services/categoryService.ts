@@ -21,9 +21,9 @@ export const categoryService = {
     return categories;
   },
 
-  getCategory: async (categoryId: number) => {
-    const category = await db.category.findUnique({
-      where: { id: categoryId },
+  getCategory: async (slug: string | undefined) => {
+    const category = await db.category.findFirst({
+      where: { slug },
     });
 
     if (!category) {

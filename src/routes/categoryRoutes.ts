@@ -13,4 +13,6 @@ router.post(
   categoryController.createCategory
 );
 
+router.get("/:slug", categoryController.getCategory);
+
 export const categoryRoutes = router;
