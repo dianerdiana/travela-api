@@ -1,7 +1,11 @@
 import express from "express";
 import { validate } from "@middlewares/validate";
 import { uploadSingleImage } from "@middlewares/uploadImage";
-import { createCategorySchema, updateCategorySchema } from "@schemas/categorySchemas";
+import {
+  createCategorySchema,
+  deleteCategorySchema,
+  updateCategorySchema,
+} from "@schemas/categorySchemas";
 import { categoryController } from "@controllers/categoryController";
 
 const router = express.Router();
@@ -22,5 +26,7 @@ router.put(
   validate(updateCategorySchema),
   categoryController.updateCategory
 );
+
+router.delete("/delete", validate(deleteCategorySchema), categoryController.deleteCategory);
 
 export const categoryRoutes = router;

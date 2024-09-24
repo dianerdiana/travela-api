@@ -69,7 +69,7 @@ export const categoryController = {
         name,
         icon,
       });
-      res.status(201).json(successResponse("Category update successfuly.", updatedCategory));
+      res.status(200).json(successResponse("Category update successfuly.", updatedCategory));
     } catch (error) {
       if (req.file?.filename) {
         fs.unlink(path.join(__dirname, `../..${UPLOADS_DIR}/${req.file.filename}`), (err) => {
@@ -78,6 +78,18 @@ export const categoryController = {
           }
         });
       }
+      next(error);
+    }
+  },
+  deleteCategory: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { categoryIds } = req.body;
+
+      const totalDeleted = await categoryService.deleteCategories({ categoryIds });
+      res
+        .status(200)
+        .json(successResponse(`${totalDeleted} categories has been deleted`, totalDeleted));
+    } catch (error) {
       next(error);
     }
   },

@@ -18,6 +18,13 @@ export const paginationCategorySchema = z.object({
   search: z.string().optional().nullable(),
 });
 
+export const deleteCategorySchema = z.object({
+  categoryIds: z
+    .array(z.number(), { required_error: "Selected category min. 1" })
+    .min(1, "Selected category min. 1"),
+});
+
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
 export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>;
 export type PaginationCategoryInput = z.infer<typeof paginationCategorySchema>;
+export type DeleteCategoryInput = z.infer<typeof deleteCategorySchema>;

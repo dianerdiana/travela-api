@@ -2,6 +2,7 @@ import { db } from "@config/db";
 import { NotFoundError } from "@errors/NotFoundError";
 import {
   CreateCategoryInput,
+  DeleteCategoryInput,
   PaginationCategoryInput,
   UpdateCategoryInput,
 } from "@schemas/categorySchemas";
@@ -136,5 +137,19 @@ export const categoryService = {
     }
 
     return updatedCategory;
+  },
+
+  deleteCategories: async ({ categoryIds }: DeleteCategoryInput) => {
+    const filteredCategoryIds = categoryIds.filter((id) => !isNaN(Number(id)));
+
+    await db.category.deleteMany({
+      where: {
+        id: {
+          in: filteredCategoryIds,
+        },
+      },
+    });
+
+    return filteredCategoryIds.length;
   },
 };
