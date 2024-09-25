@@ -11,7 +11,7 @@ import { BadRequestError } from "@errors/BadRequestError";
 
 // Utils
 import { successResponse } from "@utils/successResponse";
-import { loginSchema, registerSchema } from "@schemas/authSchemas";
+import { loginSchema, registerSchema } from "./AuthSchema";
 import { AuthService } from "./AuthService";
 
 const UPLOADS_DIR = "/uploads/avatar";

@@ -5,7 +5,7 @@ import {
   DeleteCategoryInput,
   PaginationCategoryInput,
   UpdateCategoryInput,
-} from "@schemas/categorySchemas";
+} from "./CategorySchema";
 import { generateSlug } from "@utils/generateSlug";
 import fs from "fs";
 import path from "path";
