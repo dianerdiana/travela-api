@@ -1,10 +1,10 @@
 import express from "express";
-import { authRoutes } from "./authRoutes";
-import { categoryRoutes } from "./categoryRoutes";
+import { AuthRoute } from "@controllers/Auth/AuthRoute";
+import { CategoryRoute } from "@controllers/Category/CategoryRoute";
 
 const router = express.Router();
 
-router.use("/auth", authRoutes);
-router.use("/categories", categoryRoutes);
+router.use(AuthRoute);
+router.use(CategoryRoute);
 
 export const ApiRoutes = router;
