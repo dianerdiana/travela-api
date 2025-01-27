@@ -1,30 +1,26 @@
 {
-  "ts-node": {
-    "require": ["tsconfig-paths/register"]
-  },
   "compilerOptions": {
-    "lib": ["ES2020"],
-    "target": "ES2020",
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "esModuleInterop": true, // Memungkinkan penggunaan import secara kompatibel
+    "baseUrl": "./",
+    "incremental": true,
     "skipLibCheck": true,
-    "strict": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    // Alias
-    "baseUrl": "./src",
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+
+    // Alias Path
     "paths": {
-      "@src/*": ["/*"],
-      "@config/*": ["config/*"],
-      "@services/*": ["services/*"],
-      "@middlewares/*": ["middlewares/*"],
-      "@utils/*": ["utils/*"],
-      "@errors/*": ["errors/*"],
-      "@schemas/*": ["schemas/*"],
-      "@controllers/*": ["controllers/*"]
+      "@configs": ["./src/configs"]
     }
-  },
-  "exclude": ["node_modules", "dist"],
-  "include": ["src"]
+  }
 }
