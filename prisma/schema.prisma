@@ -1,0 +1,185 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  avatar    String
+  fullName  String    @db.VarChar(255)
+  username  String    @unique @db.VarChar(100)
+  email     String    @unique @db.VarChar(255)
+  password  String    @db.VarChar(255)
+  phone     String?   @db.VarChar(15)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  lastLogin DateTime?
+
+  @@map("Users")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  icon      String?  @db.VarChar(255)
+  slug      String   @unique @db.VarChar(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@map("Categories")
+}
+
+model PackageTour {
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar(255)
+  slug          String   @unique @db.VarChar(100)
+  thumbnail     String?  @db.VarChar(255)
+  price         Decimal  @db.Decimal(10, 2)
+  days          Int
+  isRecommended Boolean  @default(false)
+  city          String?  @db.VarChar(100)
+  province      String?  @db.VarChar(100)
+  country       String?  @db.VarChar(100)
+  about         String?  @db.Text
+  rating        Decimal  @default(0.0) @db.Decimal(2, 1)
+  createdBy     Int
+  updatedBy     Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+
+  @@map("PackageTours")
+}
+
+model PackageTourCategory {
+  id            Int      @id @default(autoincrement())
+  categoryId    Int
+  packageTourId Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+
+  @@map("PackageTourCategories")
+}
+
+model PackagePhoto {
+  id            Int      @id @default(autoincrement())
+  packageTourId Int
+  photo         String   @db.VarChar(255)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+
+  @@map("PackagePhotos")
+}
+
+model PackageBank {
+  id                Int      @id @default(autoincrement())
+  bankName          String   @db.VarChar(100)
+  bankAccountName   String   @db.VarChar(255)
+  bankAccountNumber String   @db.VarChar(20)
+  bankLogo          String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now())
+
+  @@map("PackageBanks")
+}
+
+model PackageBooking {
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  packageTourId   Int
+  packageBankId   Int?
+  quantity        Int
+  startDate       DateTime
+  endDate         DateTime
+  isPaid          Boolean   @default(false)
+  totalAmount     Decimal   @db.Decimal(10, 2)
+  paymentProof    String?   @db.VarChar(255)
+  subTotal        Decimal   @db.Decimal(10, 2)
+  insurance       Decimal   @db.Decimal(10, 2)
+  tax             Decimal   @db.Decimal(10, 2)
+  status          String    @default("pending") @db.VarChar(50)
+  confirmedPaidAt DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now())
+
+  @@map("PackageBookings")
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  description String?  @db.VarChar(255)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  @@map("Roles")
+}
+
+model Permission {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  action     String   @db.VarChar(100)
+  subject    String   @db.VarChar(100)
+  conditions String?  @db.VarChar(255)
+  inverted   Boolean  @default(false)
+  reason     String?  @db.VarChar(255)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+
+  @@map("Permissions")
+}
+
+model UserRole {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  roleId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@map("UserRoles")
+}
+
+model RolePermission {
+  id           Int      @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+
+  @@map("RolePermissions")
+}
+
+model PackageReview {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  packageTourId Int
+  rating        Int      @map("Rating scale: 1-5")
+  comment       String?  @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+
+  @@unique([userId, packageTourId])
+  @@map("PackageReviews")
+}
+
+model TransactionAuditTrail {
+  id               Int      @id @default(autoincrement())
+  packageBookingId Int
+  action           String   @db.VarChar(50)
+  performedBy      Int?
+  performedAt      DateTime @default(now())
+  details          String?  @db.Text
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now())
+
+  @@map("TransactionAuditTrails")
+}

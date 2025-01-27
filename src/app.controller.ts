@@ -1,12 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { WinstonLoggerService } from './core/logger/winston-logger.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly logger: WinstonLoggerService) {}
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    this.logger.log('Hello World');
+    return 'Hello World!';
   }
 }
