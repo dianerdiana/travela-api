@@ -25,7 +25,7 @@ model User {
   updatedAt DateTime  @default(now())
   lastLogin DateTime?
 
-  @@map("Users")
+  @@map("user")
 }
 
 model Category {
@@ -36,7 +36,7 @@ model Category {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
-  @@map("Categories")
+  @@map("category")
 }
 
 model PackageTour {
@@ -57,7 +57,7 @@ model PackageTour {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
 
-  @@map("PackageTours")
+  @@map("package_tour")
 }
 
 model PackageTourCategory {
@@ -67,7 +67,7 @@ model PackageTourCategory {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
 
-  @@map("PackageTourCategories")
+  @@map("package_tour_category")
 }
 
 model PackagePhoto {
@@ -77,7 +77,7 @@ model PackagePhoto {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
 
-  @@map("PackagePhotos")
+  @@map("package_photo")
 }
 
 model PackageBank {
@@ -89,7 +89,7 @@ model PackageBank {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @default(now())
 
-  @@map("PackageBanks")
+  @@map("package_bank")
 }
 
 model PackageBooking {
@@ -111,7 +111,7 @@ model PackageBooking {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @default(now())
 
-  @@map("PackageBookings")
+  @@map("package_booking")
 }
 
 model Role {
@@ -121,7 +121,7 @@ model Role {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
 
-  @@map("Roles")
+  @@map("role")
 }
 
 model Permission {
@@ -135,7 +135,7 @@ model Permission {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
 
-  @@map("Permissions")
+  @@map("permission")
 }
 
 model UserRole {
@@ -145,7 +145,7 @@ model UserRole {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
-  @@map("UserRoles")
+  @@map("user_role")
 }
 
 model RolePermission {
@@ -155,20 +155,19 @@ model RolePermission {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now())
 
-  @@map("RolePermissions")
+  @@map("role_permission")
 }
 
 model PackageReview {
   id            Int      @id @default(autoincrement())
   userId        Int
   packageTourId Int
-  rating        Int      @map("Rating scale: 1-5")
+  rating        Int
   comment       String?  @db.Text
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
 
-  @@unique([userId, packageTourId])
-  @@map("PackageReviews")
+  @@map("package_review")
 }
 
 model TransactionAuditTrail {
@@ -181,5 +180,5 @@ model TransactionAuditTrail {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @default(now())
 
-  @@map("TransactionAuditTrails")
+  @@map("transaction_audit_trail")
 }
