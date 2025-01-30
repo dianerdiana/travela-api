@@ -20,6 +20,9 @@ async function bootstrap() {
   // Set static assets
   app.useStaticAssets(join(__dirname, '..', '/public'));
   app.useStaticAssets(join(__dirname, '..', '/views'));
+  app.useStaticAssets(join(__dirname, '..', '/uploads'), {
+    prefix: '/uploads',
+  });
 
   // Set view engine
   app.setViewEngine('hbs');

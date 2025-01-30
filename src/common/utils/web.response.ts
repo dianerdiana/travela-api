@@ -28,5 +28,5 @@ export type WebResponse<T> = {
   error: boolean;
   message: string;
   data?: T;
-  pagination?: Pagination & { total_pages: number };
+  paging?: Pagination & { total_pages: number };
 };
