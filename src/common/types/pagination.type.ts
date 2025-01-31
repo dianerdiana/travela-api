@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const PaginationSchema = z.object({
+export const paginationSchema = z.object({
   page: z
     .string()
     .transform((val) => parseInt(val, 10))
@@ -22,11 +22,4 @@ export const PaginationSchema = z.object({
   filters: z.array(z.record(z.any())).optional(),
 });
 
-export type Pagination = z.infer<typeof PaginationSchema>;
-
-export type WebResponse<T> = {
-  error: boolean;
-  message: string;
-  data?: T;
-  paging?: Pagination & { total_pages: number };
-};
+export type Pagination = z.infer<typeof paginationSchema>;

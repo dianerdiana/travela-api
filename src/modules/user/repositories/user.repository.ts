@@ -1,16 +1,36 @@
-import { Pagination } from '@common/utils/web.response';
+import { Pagination } from '@common/types/pagination.type';
 import { PrismaService } from '@core/database/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from '../dto/create-user.dto';
 
 @Injectable()
 export class UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data) {
-    return await this.prismaService.user.create({ data });
+  async create(data: CreateUserDto) {
+    return await this.prismaService.user.create({
+      data: {
+        avatar: data.avatar,
+        fullName: data.fullName,
+        username: data.username,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+      },
+    });
   }
 
-  async findMany(data: Pagination) {
+  async findManyBasedOnColumn(column: string, value: any[]) {
+    return await this.prismaService.user.findMany({
+      where: {
+        [column]: {
+          in: value,
+        },
+      },
+    });
+  }
+
+  async pagination(data: Pagination) {
     const { column, filters, limit, page, search, sort } = data;
 
     return await this.prismaService.user.findMany({

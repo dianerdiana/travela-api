@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-export const createUserSchema = z.object({
+export const updateUserSchema = z.object({
+  userId: z.number(),
   avatar: z
     .any()
     .refine((file) => file && file.mimetype.startsWith('image/'), {
@@ -13,11 +14,9 @@ export const createUserSchema = z.object({
   phone: z.string().min(10),
   email: z.string().email(),
   username: z.string().min(4),
-  password: z.string().min(8),
-  confirmPassword: z.string().min(8),
 });
 
-export const createUserResponseSchema = z.object({
+export const updateUserResponseSchema = z.object({
   id: z.number(),
   fullName: z.string(),
   phone: z.string(),
@@ -25,5 +24,5 @@ export const createUserResponseSchema = z.object({
   username: z.string(),
 });
 
-export type CreateUserDto = z.infer<typeof createUserSchema>;
-export type CreateUserResponseDto = z.infer<typeof createUserResponseSchema>;
+export type UpdateUserDto = z.infer<typeof updateUserSchema>;
+export type UpdateUserResponseDto = z.infer<typeof updateUserResponseSchema>;
