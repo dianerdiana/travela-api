@@ -2,12 +2,13 @@ import { Pagination } from '@common/types/pagination.type';
 import { PrismaService } from '@core/database/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { UserStatus } from '@common/constants/user-status';
 
 @Injectable()
 export class UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: CreateUserDto) {
+  async create(data: CreateUserDto & { status: UserStatus }) {
     return await this.prismaService.user.create({
       data: {
         avatar: data.avatar,
@@ -16,6 +17,7 @@ export class UserRepository {
         email: data.email,
         phone: data.phone,
         password: data.password,
+        status: data.status,
       },
     });
   }

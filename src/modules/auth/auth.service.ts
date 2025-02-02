@@ -12,6 +12,7 @@ import { UserRoleRepository } from './repositories/user-role.repository';
 import { JwtService } from '@nestjs/jwt';
 import { PasswordService } from '@common/services/password.service';
 import { JwtPayload } from '@common/types/jwt-payload.type';
+import { UserStatus } from '@common/constants/user-status';
 
 @Injectable()
 export class AuthService {
@@ -33,6 +34,7 @@ export class AuthService {
     const newUser = await this.userRepository.register({
       ...data,
       password,
+      status: UserStatus.Active,
     });
 
     await this.userRoleRepository.create(newUser.id, userRole.id);
@@ -43,6 +45,7 @@ export class AuthService {
       email: newUser.email,
       username: newUser.username,
       phone: newUser.phone,
+      status: newUser.status,
     };
   }
 

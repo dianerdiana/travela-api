@@ -23,6 +23,7 @@ export const registerResponseSchema = z.object({
   phone: z.string(),
   email: z.string(),
   username: z.string(),
+  status: z.string(),
 });
 
 export type RegisterDto = z.infer<typeof registerSchema>;

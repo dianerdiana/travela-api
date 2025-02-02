@@ -21,6 +21,7 @@ model User {
   email     String    @unique @db.VarChar(255)
   password  String    @db.VarChar(255)
   phone     String?   @db.VarChar(15)
+  status    String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
   lastLogin DateTime?
@@ -52,6 +53,7 @@ model PackageTour {
   country       String?  @db.VarChar(100)
   about         String?  @db.Text
   rating        Decimal  @default(0.0) @db.Decimal(2, 1)
+  status        String
   createdBy     Int
   updatedBy     Int?
   createdAt     DateTime @default(now())
@@ -86,6 +88,7 @@ model PackageBank {
   bankAccountName   String   @db.VarChar(255)
   bankAccountNumber String   @db.VarChar(20)
   bankLogo          String?  @db.VarChar(255)
+  status            String
   createdAt         DateTime @default(now())
   updatedAt         DateTime @default(now())
 
@@ -106,7 +109,7 @@ model PackageBooking {
   subTotal        Decimal   @db.Decimal(10, 2)
   insurance       Decimal   @db.Decimal(10, 2)
   tax             Decimal   @db.Decimal(10, 2)
-  status          String    @default("pending") @db.VarChar(50)
+  status          String    @default("PENDING") @db.VarChar(50)
   confirmedPaidAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @default(now())

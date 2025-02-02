@@ -75,9 +75,9 @@ export class UserController {
     };
   }
 
-  @Put()
-  @UseGuards(JwtAuthGuard)
-  async update(
-    @Body() body: UpdateUserDto,
-  ): Promise<WebResponse<UpdateUserResponseDto>> {}
+  // @Put()
+  // @UseGuards(JwtAuthGuard)
+  // async update(
+  //   @Body() body: UpdateUserDto,
+  // ): Promise<WebResponse<UpdateUserResponseDto>> {}
 }
