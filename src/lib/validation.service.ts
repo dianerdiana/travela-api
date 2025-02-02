@@ -3,7 +3,7 @@ import { ZodType } from 'zod';
 
 @Injectable()
 export class ValidationService {
-  validate<T>(zodType: ZodType<T>, data: T): T {
-    return zodType.parse(data);
+  async validate<T>(zodType: ZodType<T>, data: T): Promise<T> {
+    return await zodType.parseAsync(data);
   }
 }

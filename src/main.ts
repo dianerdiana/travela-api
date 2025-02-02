@@ -4,7 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import * as cookieParser from 'cookie-parser';
-import { WinstonLoggerService } from './core/logger/winston-logger.service';
+import { WinstonLoggerService } from './lib/winston-logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

@@ -1,5 +1,5 @@
-import { ValidationService } from '@common/services/validation.service';
-import { JwtAuthGuard } from '@core/guards/auth.guard';
+import { ValidationService } from '@lib/validation.service';
+import { JwtAuthGuard } from '@common/guards/auth.guard';
 import {
   Body,
   Controller,

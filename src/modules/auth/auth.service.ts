@@ -1,18 +1,23 @@
+// NestJs
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+
+// Repository
 import { RoleRepository } from './repositories/role.repository';
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  LoggerService,
-} from '@nestjs/common';
 import { UserRepository } from './repositories/user.repository';
+import { UserRoleRepository } from './repositories/user-role.repository';
+
+// DTO
 import { RegisterDto, RegisterResponseDto } from './dto/register.dto';
 import { LoginDto, LoginResponseDto } from './dto/login.dto';
-import { UserRoleRepository } from './repositories/user-role.repository';
-import { JwtService } from '@nestjs/jwt';
-import { PasswordService } from '@common/services/password.service';
+
+// Lib
+import { PasswordService } from '@lib/password.service';
+import { WinstonLoggerService } from '@lib/winston-logger.service';
+
+// Common
 import { JwtPayload } from '@common/types/jwt-payload.type';
-import { UserStatus } from '@common/constants/user-status';
+import { UserStatus } from '@common/constants/user-status.constant';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +25,7 @@ export class AuthService {
     private userRepository: UserRepository,
     private userRoleRepository: UserRoleRepository,
     private roleRepository: RoleRepository,
-    private logger: LoggerService,
+    private logger: WinstonLoggerService,
     private jwtService: JwtService,
     private passwordService: PasswordService,
   ) {}

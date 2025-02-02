@@ -1,8 +1,8 @@
 import { Pagination } from '@common/types/pagination.type';
-import { PrismaService } from '@core/database/prisma.service';
+import { PrismaService } from '@lib/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { UserStatus } from '@common/constants/user-status';
+import { UserStatus } from '@common/constants/user-status.constant';
 
 @Injectable()
 export class UserRepository {

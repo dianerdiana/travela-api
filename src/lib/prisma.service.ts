@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient, Prisma } from '@prisma/client';
-import { WinstonLoggerService } from '../logger/winston-logger.service';
+import { WinstonLoggerService } from './winston-logger.service';
 
 @Injectable()
 export class PrismaService
@@ -32,16 +32,16 @@ export class PrismaService
 
   onModuleInit() {
     this.$on('info', (e) => {
-      this.logger.log(String(e));
+      this.logger.log(e.message);
     });
     this.$on('warn', (e) => {
-      this.logger.warn(String(e));
+      this.logger.warn(e.message);
     });
     this.$on('error', (e) => {
-      this.logger.error(String(e));
+      this.logger.error(e.message);
     });
     this.$on('query', (e) => {
-      this.logger.log(String(e));
+      this.logger.log(e.query);
     });
   }
 }

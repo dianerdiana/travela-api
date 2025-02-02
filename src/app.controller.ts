@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { WinstonLoggerService } from './core/logger/winston-logger.service';
+import { WinstonLoggerService } from './lib/winston-logger.service';
 import { ConfigService } from '@nestjs/config';
 
 @Controller()

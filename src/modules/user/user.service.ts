@@ -1,13 +1,13 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { UserRepository } from './repositories/user.repository';
-import { WinstonLoggerService } from '@core/logger/winston-logger.service';
+import { WinstonLoggerService } from '@lib/winston-logger.service';
 
 // DTO
 import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserResponseDto } from './dto/update-user.dto';
 import { GetManyUserResponseDto } from './dto/get-many-user.dto';
 import { Pagination } from '@common/types/pagination.type';
-import { UserStatus } from '@common/constants/user-status';
+import { UserStatus } from '@common/constants/user-status.constant';
 
 @Injectable()
 export class UserService {
