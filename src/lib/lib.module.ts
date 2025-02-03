@@ -12,6 +12,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { PrismaService } from './prisma.service';
 import { PasswordService } from './password.service';
 import { ValidationService } from './validation.service';
+import { ImageKitService } from './image-kit.service';
 
 @Global()
 @Module({
@@ -28,12 +29,14 @@ import { ValidationService } from './validation.service';
     PrismaService,
     PasswordService,
     ValidationService,
+    ImageKitService,
   ],
   exports: [
     WinstonLoggerService,
     PrismaService,
     PasswordService,
     ValidationService,
+    ImageKitService,
   ],
 })
 export class LibModule {}

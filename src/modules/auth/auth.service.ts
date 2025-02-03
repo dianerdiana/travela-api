@@ -14,32 +14,58 @@ import { LoginDto, LoginResponseDto } from './dto/login.dto';
 // Lib
 import { PasswordService } from '@lib/password.service';
 import { WinstonLoggerService } from '@lib/winston-logger.service';
+import { ImageKitService } from '@lib/image-kit.service';
 
 // Common
 import { JwtPayload } from '@common/types/jwt-payload.type';
-import { UserStatus } from '@common/constants/user-status.constant';
+import { UserStatus } from '@common/types/user-status.type';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userRepository: UserRepository,
-    private userRoleRepository: UserRoleRepository,
-    private roleRepository: RoleRepository,
-    private logger: WinstonLoggerService,
-    private jwtService: JwtService,
-    private passwordService: PasswordService,
+    private readonly userRepository: UserRepository,
+    private readonly userRoleRepository: UserRoleRepository,
+    private readonly roleRepository: RoleRepository,
+    private readonly logger: WinstonLoggerService,
+    private readonly jwtService: JwtService,
+    private readonly passwordService: PasswordService,
+    private readonly imageKitService: ImageKitService,
   ) {}
 
   async register(data: RegisterDto): Promise<RegisterResponseDto> {
     this.logger.log(`AuthService.register: ${data}`);
 
+    const existEmail = await this.userRepository.findUserByEmailOrUsername(
+      data.email,
+    );
+    const existUsername = await this.userRepository.findUserByEmailOrUsername(
+      data.username,
+    );
+
+    if (existEmail) {
+      throw new HttpException('Email already exist.', HttpStatus.BAD_REQUEST);
+    }
+
+    if (existUsername) {
+      throw new HttpException(
+        'Username already exist.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const imageKitFile = await this.imageKitService.uploadFile(
+      data.avatar,
+      'avatar',
+    );
     const password = await this.passwordService.hashPassword(data.password);
     const userRole = await this.roleRepository.findRoleByName('user');
 
-    const newUser = await this.userRepository.register({
+    const newUser = await this.userRepository.create({
       ...data,
+      avatar: imageKitFile.filePath,
+      avatarId: imageKitFile.fileId,
+      status: UserStatus[data.status.toUpperCase()],
       password,
-      status: UserStatus.Active,
     });
 
     await this.userRoleRepository.create(newUser.id, userRole.id);
@@ -96,12 +122,14 @@ export class AuthService {
     const refreshToken = await this.jwtService.signAsync(tokenPayload);
 
     return {
-      id: user.id,
-      fullName: user.fullName,
-      email: user.email,
-      username: user.username,
-      phone: user.phone,
-      role: role.name,
+      userData: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        username: user.username,
+        phone: user.phone,
+        role: role.name,
+      },
       authToken,
       refreshToken,
     };

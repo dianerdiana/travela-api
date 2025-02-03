@@ -6,12 +6,14 @@ export const loginSchema = z.object({
 });
 
 export const loginResponseSchema = z.object({
-  id: z.number(),
-  fullName: z.string(),
-  phone: z.string(),
-  email: z.string(),
-  username: z.string(),
-  role: z.string(),
+  userData: z.object({
+    id: z.number(),
+    fullName: z.string(),
+    phone: z.string(),
+    email: z.string(),
+    username: z.string(),
+    role: z.string(),
+  }),
   authToken: z.string(),
   refreshToken: z.string(),
 });

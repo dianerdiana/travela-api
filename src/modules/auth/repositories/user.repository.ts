@@ -1,16 +1,16 @@
 import { PrismaService } from '@lib/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { RegisterDto } from '../dto/register.dto';
-import { UserStatus } from '@common/constants/user-status.constant';
 
 @Injectable()
 export class UserRepository {
   constructor(private prismaService: PrismaService) {}
 
-  async register(data: RegisterDto & { status: UserStatus }) {
+  async create(data: RegisterDto & { avatarId: string }) {
     return await this.prismaService.user.create({
       data: {
         avatar: data.avatar,
+        avatarId: data.avatarId,
         fullName: data.fullName,
         username: data.username,
         email: data.email,
@@ -25,15 +25,6 @@ export class UserRepository {
     return await this.prismaService.user.findFirst({
       where: {
         OR: [{ email: str }, { username: str }],
-      },
-    });
-  }
-
-  async login(email: string, password: string) {
-    return await this.prismaService.user.findFirst({
-      where: {
-        OR: [{ email }, { username: email }],
-        password,
       },
     });
   }

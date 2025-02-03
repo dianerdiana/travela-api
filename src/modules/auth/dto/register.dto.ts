@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { UserStatus } from '@common/types/user-status.type';
 
 export const registerSchema = z.object({
   avatar: z
@@ -15,6 +16,7 @@ export const registerSchema = z.object({
   username: z.string().min(4),
   password: z.string().min(8),
   confirmPassword: z.string().min(8),
+  status: z.nativeEnum(UserStatus),
 });
 
 export const registerResponseSchema = z.object({

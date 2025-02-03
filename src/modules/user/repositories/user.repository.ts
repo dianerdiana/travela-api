@@ -2,7 +2,7 @@ import { Pagination } from '@common/types/pagination.type';
 import { PrismaService } from '@lib/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { UserStatus } from '@common/constants/user-status.constant';
+import { UserStatus } from '@common/types/user-status.type';
 
 @Injectable()
 export class UserRepository {

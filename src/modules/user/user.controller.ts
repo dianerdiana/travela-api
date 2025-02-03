@@ -36,7 +36,7 @@ export class UserController {
     @Body() data: CreateUserDto,
     @AuthUser() user: JwtPayload,
   ): Promise<WebResponse<CreateUserResponseDto>> {
-    this.validationService.validate(createUserSchema, data);
+    this.validationService.validateAsync(createUserSchema, data);
 
     const newUser = await this.userService.create(data);
 
@@ -52,7 +52,7 @@ export class UserController {
   async getDataPagination(
     @Query() query: any,
   ): Promise<WebResponse<GetManyUserResponseDto[]>> {
-    const pagination = this.validationService.validate(
+    const pagination = this.validationService.validateAsync(
       paginationSchema,
       query,
     ) as Pagination;

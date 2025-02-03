@@ -4,31 +4,29 @@ import ImageKit from 'imagekit';
 
 @Injectable()
 export class ImageKitService {
-  private imagekit: ImageKit;
+  private imagekit = new ImageKit({
+    publicKey: imageKit().publicKey,
+    privateKey: imageKit().privateKey,
+    urlEndpoint: imageKit().urlEndpoint,
+  });
 
-  constructor() {
-    this.imagekit = new ImageKit({
-      publicKey: imageKit().publicKey,
-      privateKey: imageKit().privateKey,
-      urlEndpoint: imageKit().urlEndpoint,
+  async uploadFile(file: Express.Multer.File, folderName: string) {
+    const response = await this.imagekit.upload({
+      file: file.buffer,
+      fileName: file.originalname,
+      folder: `/${imageKit().baseFolder}/${folderName}`,
     });
+    return {
+      filePath: response.filePath,
+      fileId: response.fileId,
+    };
   }
 
-  async uploadFile(file: Express.Multer.File) {
-    try {
-      const response = await this.imagekit.upload({
-        file: file.buffer,
-        fileName: file.originalname,
-        folder: imageKit().baseFolder,
-      });
+  async deleteFile(fileId: string) {
+    await this.imagekit.deleteFile(fileId);
+  }
 
-      return {
-        filePath: response.filePath,
-        fileId: response.fileId,
-        fileType: response.fileType,
-      };
-    } catch (error) {
-      throw new Error(error.message);
-    }
+  async deleteFiles(fileIds: string[]) {
+    await this.imagekit.bulkDeleteFiles(fileIds);
   }
 }

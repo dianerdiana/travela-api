@@ -16,6 +16,7 @@ datasource db {
 model User {
   id        Int       @id @default(autoincrement())
   avatar    String
+  avatarId  String
   fullName  String    @db.VarChar(255)
   username  String    @unique @db.VarChar(100)
   email     String    @unique @db.VarChar(255)
@@ -33,6 +34,7 @@ model Category {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(100)
   icon      String?  @db.VarChar(255)
+  iconId    String?
   slug      String   @unique @db.VarChar(100)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -45,6 +47,7 @@ model PackageTour {
   name          String   @db.VarChar(255)
   slug          String   @unique @db.VarChar(100)
   thumbnail     String?  @db.VarChar(255)
+  thumbnailId   String
   price         Decimal  @db.Decimal(10, 2)
   days          Int
   isRecommended Boolean  @default(false)
@@ -76,6 +79,7 @@ model PackagePhoto {
   id            Int      @id @default(autoincrement())
   packageTourId Int
   photo         String   @db.VarChar(255)
+  photoId       String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
 
@@ -88,6 +92,7 @@ model PackageBank {
   bankAccountName   String   @db.VarChar(255)
   bankAccountNumber String   @db.VarChar(20)
   bankLogo          String?  @db.VarChar(255)
+  bankLogoId        String?
   status            String
   createdAt         DateTime @default(now())
   updatedAt         DateTime @default(now())
@@ -105,7 +110,8 @@ model PackageBooking {
   endDate         DateTime
   isPaid          Boolean   @default(false)
   totalAmount     Decimal   @db.Decimal(10, 2)
-  paymentProof    String?   @db.VarChar(255)
+  paymentProof    String    @db.VarChar(255)
+  paymentProofId  String
   subTotal        Decimal   @db.Decimal(10, 2)
   insurance       Decimal   @db.Decimal(10, 2)
   tax             Decimal   @db.Decimal(10, 2)

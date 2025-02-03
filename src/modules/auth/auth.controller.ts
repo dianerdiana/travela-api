@@ -21,8 +21,8 @@ import { IMG_MIMETYPE } from '@common/constants/image-mimetype.constant';
 @Controller('/auth')
 export class AuthController {
   constructor(
-    private validationService: ValidationService,
-    private authService: AuthService,
+    private readonly validationService: ValidationService,
+    private readonly authService: AuthService,
   ) {}
 
   @Post('register')
@@ -32,11 +32,11 @@ export class AuthController {
     @Body() body: RegisterDto,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<WebResponse<RegisterResponseDto>> {
-    console.log(file);
+    const validateData = { ...body, avatar: file };
 
-    this.validationService.validate(registerSchema, body);
+    await this.validationService.validateAsync(registerSchema, validateData);
 
-    const newUser = await this.authService.register(body);
+    const newUser = await this.authService.register(validateData);
 
     return {
       error: false,

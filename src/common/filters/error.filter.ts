@@ -19,9 +19,19 @@ export class ErrorFilter implements ExceptionFilter {
         message: exception.getResponse(),
       });
     } else if (exception instanceof ZodError) {
+      const firstError = exception.errors[0];
+      const firstPath = this.capitalizeFirstLetter(firstError.path[0]);
+      let message = firstError.message;
+
+      if (firstError.code === 'invalid_type') {
+        message = `${firstPath} wajib diisi.`;
+      } else if (firstError.code === 'too_small') {
+        message = `${firstPath} wajib diisi minimal ${firstError.minimum} karakter.`;
+      }
+
       response.status(400).json({
         error: true,
-        message: exception.errors[0].message,
+        message,
       });
     } else {
       response.status(500).json({
@@ -29,5 +39,13 @@ export class ErrorFilter implements ExceptionFilter {
         message: exception.message,
       });
     }
+  }
+
+  capitalizeFirstLetter(text: string | number): string {
+    if (typeof text === 'number') {
+      return String(text);
+    }
+
+    return text.charAt(0).toUpperCase() + text.slice(1);
   }
 }

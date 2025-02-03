@@ -7,7 +7,7 @@ import { CreateUserDto, CreateUserResponseDto } from './dto/create-user.dto';
 import { UpdateUserDto, UpdateUserResponseDto } from './dto/update-user.dto';
 import { GetManyUserResponseDto } from './dto/get-many-user.dto';
 import { Pagination } from '@common/types/pagination.type';
-import { UserStatus } from '@common/constants/user-status.constant';
+import { UserStatus } from '@common/types/user-status.type';
 
 @Injectable()
 export class UserService {
@@ -20,7 +20,7 @@ export class UserService {
     this.logger.log(`Creating new user with email: ${data.email}`);
     const newUser = await this.userRepository.create({
       ...data,
-      status: UserStatus.Active,
+      status: UserStatus.ACTIVE,
     });
 
     return {

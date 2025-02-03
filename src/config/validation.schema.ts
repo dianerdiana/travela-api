@@ -1,4 +1,4 @@
-import { optional, z } from 'zod';
+import { z } from 'zod';
 
 // Schema Validasi Environment Variables
 export const envSchema = z.object({
@@ -12,6 +12,10 @@ export const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   JWT_SECRET: z.string(),
   JWT_EXPIRATIONS: z.string().optional(),
+  IMAGEKIT_PUBLIC_KEY: z.string(),
+  IMAGEKIT_PRIVATE_KEY: z.string(),
+  IMAGEKIT_URL_ENDPOINT: z.string(),
+  IMAGEKIT_BASE_FOLDER: z.string(),
 });
 
 // Tipe untuk Environment Variables

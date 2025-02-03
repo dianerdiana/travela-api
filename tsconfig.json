@@ -25,6 +25,8 @@
       "@core/*": ["./src/core/*"],
       "@modules/*": ["./src/modules/*"],
       "@lib/*": ["./src/lib/*"]
-    }
+    },
+
+    "esModuleInterop": true
   }
 }
