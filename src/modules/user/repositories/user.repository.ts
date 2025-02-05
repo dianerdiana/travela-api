@@ -2,16 +2,16 @@ import { Pagination } from '@common/types/pagination.type';
 import { PrismaService } from '@lib/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { UserStatus } from '@common/types/user-status.type';
 
 @Injectable()
 export class UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: CreateUserDto & { status: UserStatus }) {
+  async create(data: CreateUserDto & { avatarId: string }) {
     return await this.prismaService.user.create({
       data: {
         avatar: data.avatar,
+        avatarId: data.avatarId,
         fullName: data.fullName,
         username: data.username,
         email: data.email,
@@ -55,6 +55,14 @@ export class UserRepository {
   async findOne(userId: number) {
     return await this.prismaService.user.findUnique({
       where: { id: userId },
+    });
+  }
+
+  async findUserByEmailOrUsername(str: string) {
+    return await this.prismaService.user.findFirst({
+      where: {
+        OR: [{ email: str }, { username: str }],
+      },
     });
   }
 

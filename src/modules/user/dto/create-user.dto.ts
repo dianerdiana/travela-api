@@ -1,3 +1,4 @@
+import { UserStatus } from '@common/types/user-status.type';
 import { z } from 'zod';
 
 export const createUserSchema = z.object({
@@ -15,6 +16,7 @@ export const createUserSchema = z.object({
   username: z.string().min(4),
   password: z.string().min(8),
   confirmPassword: z.string().min(8),
+  status: z.nativeEnum(UserStatus),
 });
 
 export const createUserResponseSchema = z.object({
@@ -23,6 +25,7 @@ export const createUserResponseSchema = z.object({
   phone: z.string(),
   email: z.string(),
   username: z.string(),
+  status: z.string(),
 });
 
 export type CreateUserDto = z.infer<typeof createUserSchema>;
