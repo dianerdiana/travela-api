@@ -1,5 +1,5 @@
 // NestJs
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 
 // Repository
 import { UserRepository } from './repositories/user.repository';
@@ -42,14 +42,11 @@ export class UserService {
     );
 
     if (existEmail) {
-      throw new HttpException('Email already exist.', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('Email already exist.');
     }
 
     if (existUsername) {
-      throw new HttpException(
-        'Username already exist.',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('Username already exist.');
     }
 
     const imageKitFile = await this.imageKitService.uploadFile(

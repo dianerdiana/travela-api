@@ -6,10 +6,10 @@ import { MyConfigModule } from './config/config.module';
 
 // API Modules
 import { AuthModule } from '@modules/auth/auth.module';
-// import { UserModule } from './modules/user/user.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
-  imports: [CommonModule, LibModule, MyConfigModule, AuthModule],
+  imports: [CommonModule, LibModule, MyConfigModule, AuthModule, UserModule],
   controllers: [AppController],
 })
 export class AppModule {}

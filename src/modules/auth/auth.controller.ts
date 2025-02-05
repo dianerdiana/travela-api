@@ -17,6 +17,7 @@ import {
 import { ValidationService } from '@lib/validation.service';
 import { FileUploadInterceptor } from '@common/interceptors/file-upload.interceptor';
 import { IMG_MIMETYPE } from '@common/constants/image-mimetype.constant';
+import { LoginDto, LoginResponseDto, loginSchema } from './dto/login.dto';
 
 @Controller('/auth')
 export class AuthController {
@@ -42,6 +43,20 @@ export class AuthController {
       error: false,
       message: 'OK',
       data: newUser,
+    };
+  }
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() body: LoginDto): Promise<WebResponse<LoginResponseDto>> {
+    await this.validationService.validateAsync(loginSchema, body);
+
+    const response = await this.authService.login(body);
+
+    return {
+      error: false,
+      message: 'OK',
+      data: response,
     };
   }
 }
