@@ -1,0 +1,6 @@
+{
+  "required_error": "Kolom wajib diisi.",
+  "invalid_type": "Tipe tidak valid. Seharusnya {expected}, tetapi yang diterima {received}.",
+  "too_small": "Nilai terlalu kecil. Minimal yang diizinkan adalah {minimum}.",
+  "too_big": "Nilai terlalu besar. Maksimal yang diizinkan adalah {maximum}."
+}

@@ -3,6 +3,9 @@ import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 
+// Module
+import { I18NModuleSetup } from './i18n/i18n.module';
+
 // Config
 import { authConfig } from '@config/auth.config';
 
@@ -13,6 +16,7 @@ import { PrismaService } from './prisma.service';
 import { PasswordService } from './password.service';
 import { ValidationService } from './validation.service';
 import { ImageKitService } from './image-kit.service';
+import { LangService } from './i18n/lang.service';
 
 @Global()
 @Module({
@@ -22,6 +26,7 @@ import { ImageKitService } from './image-kit.service';
       global: true,
       secret: authConfig().jwtSecret,
     }),
+    I18NModuleSetup,
   ],
   providers: [
     WinstonLoggerService,
@@ -30,6 +35,7 @@ import { ImageKitService } from './image-kit.service';
     PasswordService,
     ValidationService,
     ImageKitService,
+    LangService,
   ],
   exports: [
     WinstonLoggerService,
@@ -37,6 +43,7 @@ import { ImageKitService } from './image-kit.service';
     PasswordService,
     ValidationService,
     ImageKitService,
+    LangService,
   ],
 })
 export class LibModule {}
