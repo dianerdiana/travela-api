@@ -18,12 +18,14 @@ import { ValidationService } from '@lib/validation.service';
 import { FileUploadInterceptor } from '@common/interceptors/file-upload.interceptor';
 import { IMG_MIMETYPE } from '@common/constants/image-mimetype.constant';
 import { LoginDto, LoginResponseDto, loginSchema } from './dto/login.dto';
+import { LangService } from '@lib/i18n/lang.service';
 
 @Controller('/auth')
 export class AuthController {
   constructor(
     private readonly validationService: ValidationService,
     private readonly authService: AuthService,
+    private readonly langService: LangService,
   ) {}
 
   @Post('register')
@@ -41,7 +43,7 @@ export class AuthController {
 
     return {
       error: false,
-      message: 'OK',
+      message: this.langService.t('response.ok'),
       data: newUser,
     };
   }
@@ -55,7 +57,7 @@ export class AuthController {
 
     return {
       error: false,
-      message: 'OK',
+      message: this.langService.t('response.ok'),
       data: response,
     };
   }

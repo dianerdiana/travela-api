@@ -9,9 +9,9 @@ export class LangService {
     return I18nContext.current().lang;
   }
 
-  async translate(key: string, args?: Record<string, any>): Promise<string> {
+  t(key: string, args?: Record<string, any>): string {
     const lang = this.currentLang;
 
-    return await this.i18nService.t(key, { lang, args });
+    return this.i18nService.t(key, { lang, args });
   }
 }

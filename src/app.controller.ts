@@ -16,15 +16,10 @@ export class AppController {
     this.logger.log('Hello World');
     const currentLang = I18nContext.current().lang;
 
-    const validationError = await this.langService.translate(
-      'validation.too_small',
-      {
-        minimum: 2,
-      },
-    );
-    const message = await this.langService.translate(
-      'response-message.success',
-    );
+    const validationError = this.langService.t('validation.too_small', {
+      minimum: 2,
+    });
+    const message = this.langService.t('response.success');
 
     const validationTooBig = this.i18n.t('validation.required_error', {
       lang: currentLang,
