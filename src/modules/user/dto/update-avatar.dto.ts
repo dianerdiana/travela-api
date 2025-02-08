@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const updateAvatarSchema = z.object({
+  userId: z.number(),
   avatar: z
     .any()
     .refine((file) => file && file.mimetype.startsWith('image/'), {
@@ -13,3 +14,4 @@ export const updateAvatarSchema = z.object({
 });
 
 export type UpdateAvatarDto = z.infer<typeof updateAvatarSchema>;
+export type UpdateAvatarResponse = string;

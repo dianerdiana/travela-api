@@ -1,5 +1,9 @@
 // NestJs
-import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 // Repository
 import { UserRepository } from './repositories/user.repository';
@@ -19,6 +23,8 @@ import { UserStatus } from '@common/types/user-status.type';
 import { PasswordService } from '@lib/password.service';
 import { ImageKitService } from '@lib/image-kit.service';
 import { WinstonLoggerService } from '@lib/winston-logger.service';
+import { LangService } from '@lib/i18n/lang.service';
+import { UpdateAvatarDto, UpdateAvatarResponse } from './dto/update-avatar.dto';
 
 @Injectable()
 export class UserService {
@@ -29,6 +35,7 @@ export class UserService {
     private imageKitService: ImageKitService,
     private roleRepository: RoleRepository,
     private userRoleRepository: UserRoleRepository,
+    private readonly langService: LangService,
   ) {}
 
   async create(data: CreateUserDto): Promise<CreateUserResponseDto> {
@@ -42,11 +49,19 @@ export class UserService {
     );
 
     if (existEmail) {
-      throw new BadRequestException('Email already exist.');
+      throw new BadRequestException(
+        this.langService.t('exception.already_exist', {
+          label: 'Email',
+        }),
+      );
     }
 
     if (existUsername) {
-      throw new BadRequestException('Username already exist.');
+      throw new BadRequestException(
+        this.langService.t('exception.already_exist', {
+          label: 'Username',
+        }),
+      );
     }
 
     const imageKitFile = await this.imageKitService.uploadFile(
@@ -94,29 +109,43 @@ export class UserService {
     const user = await this.userRepository.findOne(data.userId);
 
     if (!user) {
-      throw new HttpException('User not found', 404);
+      throw new NotFoundException(
+        this.langService.t('exception.not_found', {
+          label: 'User',
+        }),
+      );
     }
 
-    this.logger.log(`Updating user with id: ${data.userId}`);
-    const updatedData = await this.userRepository.update(data.userId, data);
+    this.logger.log(`UserService.update: ${JSON.stringify(data)}`);
+    const updatedUser = await this.userRepository.update(data.userId, data);
 
     return {
-      id: updatedData.id,
-      fullName: updatedData.fullName,
-      phone: updatedData.phone,
-      email: updatedData.email,
-      username: updatedData.username,
+      id: updatedUser.id,
+      fullName: updatedUser.fullName,
+      phone: updatedUser.phone,
+      email: updatedUser.email,
+      username: updatedUser.username,
     };
+  }
+
+  async updateAvatar(data: UpdateAvatarDto): Promise<UpdateAvatarResponse> {
+    const updatedUser = await this.userRepository.update(data.userId, data);
+
+    return updatedUser.avatar;
   }
 
   async delete(userId: number) {
     const user = await this.userRepository.findOne(userId);
 
     if (!user) {
-      throw new HttpException('User not found', 404);
+      throw new NotFoundException(
+        this.langService.t('exception.not_found', {
+          label: 'User',
+        }),
+      );
     }
 
-    this.logger.log(`Deleting user with id: ${userId}`);
+    this.logger.log(`UserService.delete: ${userId}`);
 
     return await this.userRepository.delete(userId);
   }
@@ -128,7 +157,11 @@ export class UserService {
     );
 
     if (users.length !== userIds.length) {
-      throw new HttpException("Some user doesn't exists.", 404);
+      throw new NotFoundException(
+        this.langService.t('exception.not_found', {
+          label: 'Some user',
+        }),
+      );
     }
 
     return await this.userRepository.deleteMany(userIds);

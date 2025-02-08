@@ -5,12 +5,10 @@ import {
   ForbiddenException,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
   Post,
   Put,
   Query,
-  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -34,6 +32,7 @@ import {
 
 // Lib
 import { ValidationService } from '@lib/validation.service';
+import { LangService } from '@lib/i18n/lang.service';
 
 // Common
 import { JwtAuthGuard } from '@common/guards/auth.guard';
@@ -52,8 +51,9 @@ import { JwtPayload } from '@common/types/jwt-payload.type';
 @UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(
-    private validationService: ValidationService,
-    private userService: UserService,
+    private readonly validationService: ValidationService,
+    private readonly userService: UserService,
+    private readonly langService: LangService,
   ) {}
 
   @Post('create')
@@ -111,7 +111,7 @@ export class UserController {
     await this.validationService.validateAsync(updateUserSchema, body);
 
     if (user.sub !== body.userId) {
-      throw new ForbiddenException("You don't have access.");
+      throw new ForbiddenException(this.langService.t('exception.forbidden'));
     }
 
     const updatedResponse = await this.userService.update(body);
