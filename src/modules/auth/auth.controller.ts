@@ -30,7 +30,9 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  @UseInterceptors(FileUploadInterceptor.uploadFile('avatar', IMG_MIMETYPE))
+  @UseInterceptors(
+    FileUploadInterceptor.prototype.uploadFile('avatar', IMG_MIMETYPE),
+  )
   async register(
     @Body() body: RegisterDto,
     @UploadedFile() file: Express.Multer.File,

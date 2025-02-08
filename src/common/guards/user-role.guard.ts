@@ -2,17 +2,20 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  HttpException,
-  HttpStatus,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '@common/constants/role.constant';
 import { UserRole } from '@common/types/user-role.type';
 import { JwtPayload } from '@common/types/jwt-payload.type';
+import { LangService } from '@lib/i18n/lang.service';
 
 @Injectable()
 export class UserRoleGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly langService: LangService,
+  ) {}
 
   canActivate(context: ExecutionContext): boolean {
     // Get the required roles from the metadata
@@ -29,10 +32,7 @@ export class UserRoleGuard implements CanActivate {
     const user = request.user as JwtPayload; // Assuming the user is attached to the request
 
     if (!requiredRoles.includes(UserRole[user.role.toUpperCase()])) {
-      throw new HttpException(
-        "You don't have access to do it.",
-        HttpStatus.FORBIDDEN,
-      );
+      throw new ForbiddenException(this.langService.t('exception.forbidden'));
     }
 
     return false;

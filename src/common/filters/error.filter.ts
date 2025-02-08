@@ -6,9 +6,12 @@ import {
 } from '@nestjs/common';
 
 import { ZodError } from 'zod';
+import { LangService } from '@lib/i18n/lang.service';
 
 @Catch(ZodError, HttpException)
 export class ErrorFilter implements ExceptionFilter {
+  constructor(private readonly langService: LangService) {}
+
   catch(exception: any, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse();
 
@@ -20,20 +23,30 @@ export class ErrorFilter implements ExceptionFilter {
         message: exception.getResponse(),
       });
     } else if (exception instanceof ZodError) {
-      const firstError = exception.errors[0];
-      const firstPath = this.capitalizeFirstLetter(firstError.path[0]);
-      let message = firstError.message;
+      const messages = exception.errors.map((error) => {
+        const message = error;
 
-      if (firstError.code === 'invalid_type') {
-        message = `${firstPath} wajib diisi.`;
-      } else if (firstError.code === 'too_small') {
-        message = `${firstPath} wajib diisi minimal ${firstError.minimum} karakter.`;
-      }
+        if (error.message === 'Required') {
+          message['message'] = this.langService.t('validation.required');
+        } else if (error.code === 'invalid_type') {
+          message['message'] = this.langService.t('validation.invalid_type');
+        } else if (error.code === 'too_small') {
+          message['message'] = this.langService.t('validation.too_small', {
+            min: error.minimum,
+          });
+        } else if (error.code === 'too_big') {
+          message['message'] = this.langService.t('validation.too_big', {
+            max: error.maximum,
+          });
+        }
+
+        return message;
+      });
 
       response.status(400).json({
         error: true,
         statusCode: 400,
-        message,
+        message: messages,
       });
     } else {
       response.status(500).json({

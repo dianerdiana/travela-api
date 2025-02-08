@@ -1,4 +1,8 @@
 {
   "already_exsist": "{label} already exist.",
-  "login_failed": "Username or password is not correct."
+  "forbidden": "Forbidden",
+  "invalid_token": "'Invalid or expired token.",
+  "login_failed": "Username or password is not correct.",
+  "unauthorized": "Unauthorized.",
+  "invalid_file_type": "Invalid file type."
 }
