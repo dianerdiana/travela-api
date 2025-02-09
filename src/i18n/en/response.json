@@ -1,4 +1,5 @@
 {
   "ok": "OK",
-  "success": "success"
+  "success": "success",
+  "failed": "failed"
 }

@@ -17,13 +17,13 @@ export class AppController {
     const currentLang = I18nContext.current().lang;
 
     const validationError = this.langService.t('validation.too_small', {
-      minimum: 2,
+      min: 2,
     });
     const message = this.langService.t('response.success');
 
-    const validationTooBig = this.i18n.t('validation.required_error', {
+    const validationTooBig = this.i18n.t('validation.required', {
       lang: currentLang,
-      args: { maximum: 100 },
+      args: { max: 100 },
     });
 
     return {

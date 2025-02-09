@@ -94,6 +94,7 @@ export class UserService {
   async getDataPagination(
     paging: Pagination,
   ): Promise<GetManyUserResponseDto[]> {
+    this.logger.log(`UserService.getDataPagination: ${JSON.stringify(paging)}`);
     const users = await this.userRepository.pagination(paging);
 
     return users.map((item) => ({
@@ -106,6 +107,7 @@ export class UserService {
   }
 
   async update(data: UpdateUserDto): Promise<UpdateUserResponseDto> {
+    this.logger.log(`UserService.update: ${JSON.stringify(data)}`);
     const user = await this.userRepository.findOne(data.userId);
 
     if (!user) {
@@ -129,12 +131,14 @@ export class UserService {
   }
 
   async updateAvatar(data: UpdateAvatarDto): Promise<UpdateAvatarResponse> {
+    this.logger.log(`UserService.updateAvatar: ${JSON.stringify(data)}`);
     const updatedUser = await this.userRepository.update(data.userId, data);
 
     return updatedUser.avatar;
   }
 
   async delete(userId: number) {
+    this.logger.log(`UserService.delete: ${JSON.stringify(userId)}`);
     const user = await this.userRepository.findOne(userId);
 
     if (!user) {
@@ -151,6 +155,7 @@ export class UserService {
   }
 
   async deleteMany(userIds: number[]) {
+    this.logger.log(`UserService.deleteMany: ${JSON.stringify(userIds)}`);
     const users = await this.userRepository.findManyBasedOnColumn(
       'id',
       userIds,
