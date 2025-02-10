@@ -18,6 +18,7 @@ import { GetManyUserResponseDto } from './dto/get-many-user.dto';
 // Common
 import { Pagination } from '@common/types/pagination.type';
 import { UserStatus } from '@common/types/user-status.type';
+import { FOLDER_AVATAR } from '@common/constants/image-kit-folder.constant';
 
 // Lib
 import { PasswordService } from '@lib/password.service';
@@ -64,9 +65,15 @@ export class UserService {
       );
     }
 
+    if (data.confirmPassword !== data.password) {
+      throw new BadRequestException(
+        this.langService.t('exception.confirm_password_invalid'),
+      );
+    }
+
     const imageKitFile = await this.imageKitService.uploadFile(
       data.avatar,
-      'avatar',
+      FOLDER_AVATAR,
     );
     const password = await this.passwordService.hashPassword(data.password);
     const userRole = await this.roleRepository.findRoleByName('user');
@@ -106,9 +113,44 @@ export class UserService {
     }));
   }
 
-  async update(data: UpdateUserDto): Promise<UpdateUserResponseDto> {
+  async getUserById(userId: number): Promise<any> {
+    this.logger.log(`UserService.getUserById: ${userId}`);
+    const user = await this.userRepository.findOne(userId);
+
+    if (!user) {
+      throw new BadRequestException(
+        this.langService.t('exception.not_found', {
+          label: 'User',
+        }),
+      );
+    }
+
+    const avatarUrl = await this.imageKitService.getImageUrl(user.avatarId);
+
+    return {
+      id: user.id,
+      fullName: user.fullName,
+      phone: user.phone,
+      email: user.email,
+      username: user.username,
+      avatar: avatarUrl,
+    };
+  }
+
+  async getCountDataPagination(paging: Pagination): Promise<number> {
+    this.logger.log(
+      `UserService.getTotalDataPagination: ${JSON.stringify(paging)}`,
+    );
+
+    return await this.userRepository.paginationCount(paging);
+  }
+
+  async update(
+    data: UpdateUserDto,
+    userId: number,
+  ): Promise<UpdateUserResponseDto> {
     this.logger.log(`UserService.update: ${JSON.stringify(data)}`);
-    const user = await this.userRepository.findOne(data.userId);
+    const user = await this.userRepository.findOne(userId);
 
     if (!user) {
       throw new NotFoundException(
@@ -118,8 +160,7 @@ export class UserService {
       );
     }
 
-    this.logger.log(`UserService.update: ${JSON.stringify(data)}`);
-    const updatedUser = await this.userRepository.update(data.userId, data);
+    const updatedUser = await this.userRepository.update(userId, data);
 
     return {
       id: updatedUser.id,
@@ -130,11 +171,35 @@ export class UserService {
     };
   }
 
-  async updateAvatar(data: UpdateAvatarDto): Promise<UpdateAvatarResponse> {
+  async updateAvatar(
+    data: UpdateAvatarDto,
+    userId: number,
+  ): Promise<UpdateAvatarResponse> {
     this.logger.log(`UserService.updateAvatar: ${JSON.stringify(data)}`);
-    const updatedUser = await this.userRepository.update(data.userId, data);
 
-    return updatedUser.avatar;
+    const user = await this.userRepository.findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException(
+        this.langService.t('exception.not_found', {
+          label: 'User',
+        }),
+      );
+    }
+
+    await this.imageKitService.deleteFile(user.avatarId);
+
+    const imageKitResponse = await this.imageKitService.uploadFile(
+      data.avatar,
+      FOLDER_AVATAR,
+    );
+
+    await this.userRepository.update(userId, {
+      avatar: imageKitResponse.filePath,
+      avatarId: imageKitResponse.fileId,
+    });
+
+    return imageKitResponse.fileUrl;
   }
 
   async delete(userId: number) {
@@ -149,9 +214,12 @@ export class UserService {
       );
     }
 
-    this.logger.log(`UserService.delete: ${userId}`);
-
-    return await this.userRepository.delete(userId);
+    const deletedUser = await this.userRepository.delete(userId);
+    return {
+      id: deletedUser.id,
+      fullName: deletedUser.fullName,
+      username: deletedUser.username,
+    };
   }
 
   async deleteMany(userIds: number[]) {

@@ -19,7 +19,14 @@ export class ImageKitService {
     return {
       filePath: response.filePath,
       fileId: response.fileId,
+      fileUrl: response.url,
     };
+  }
+
+  async getImageUrl(fileId: string) {
+    const response = await this.imagekit.getFileDetails(fileId);
+
+    return response.url;
   }
 
   async deleteFile(fileId: string) {

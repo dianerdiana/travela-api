@@ -15,12 +15,11 @@ export class ErrorFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse();
 
-    console.log(exception);
     if (exception instanceof HttpException) {
       response.status(exception.getStatus()).json({
         error: true,
         statusCode: exception.getStatus(),
-        message: exception.getResponse(),
+        message: exception.message,
       });
     } else if (exception instanceof ZodError) {
       const messages = exception.errors.map((error) => {

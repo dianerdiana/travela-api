@@ -4,5 +4,6 @@
   "invalid_token": "'Invalid or expired token.",
   "login_failed": "Username or password is not correct.",
   "unauthorized": "Unauthorized.",
-  "invalid_file_type": "Invalid file type."
+  "invalid_file_type": "Invalid file type.",
+  "confirm_password_invalid": "Confirm password doesn't match."
 }

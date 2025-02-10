@@ -52,6 +52,24 @@ export class UserRepository {
     });
   }
 
+  async paginationCount(data: Pagination) {
+    const { column, filters, search, sort } = data;
+
+    return await this.prismaService.user.count({
+      where: {
+        OR: [
+          { fullName: { contains: search } },
+          { email: { contains: search } },
+          { username: { contains: search } },
+        ],
+        ...filters,
+      },
+      orderBy: {
+        [column]: sort,
+      },
+    });
+  }
+
   async findOne(userId: number) {
     return await this.prismaService.user.findUnique({
       where: { id: userId },

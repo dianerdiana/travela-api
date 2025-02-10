@@ -35,6 +35,6 @@ export class UserRoleGuard implements CanActivate {
       throw new ForbiddenException(this.langService.t('exception.forbidden'));
     }
 
-    return false;
+    return true;
   }
 }

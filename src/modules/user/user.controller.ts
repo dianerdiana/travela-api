@@ -2,10 +2,12 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Put,
   Query,
@@ -29,6 +31,12 @@ import {
   UpdateUserResponseDto,
   updateUserSchema,
 } from './dto/update-user.dto';
+import {
+  UpdateAvatarDto,
+  UpdateAvatarResponse,
+  updateAvatarSchema,
+} from './dto/update-avatar.dto';
+import { transformUserIdSchema } from './dto/transform-user-id.dto';
 
 // Lib
 import { ValidationService } from '@lib/validation.service';
@@ -37,7 +45,7 @@ import { LangService } from '@lib/i18n/lang.service';
 // Common
 import { JwtAuthGuard } from '@common/guards/auth.guard';
 import { WebResponse } from '@common/types/web-response.type';
-import { Pagination, paginationSchema } from '@common/types/pagination.type';
+import { paginationSchema } from '@common/types/pagination.type';
 import { UserRoleGuard } from '@common/guards/user-role.guard';
 import { Roles } from '@common/decorators/role.decorator';
 import { UserRole } from '@common/types/user-role.type';
@@ -46,7 +54,7 @@ import { IMG_MIMETYPE } from '@common/constants/image-mimetype.constant';
 import { AuthUser } from '@common/decorators/auth-user.decorator';
 import { JwtPayload } from '@common/types/jwt-payload.type';
 
-@Controller('users')
+@Controller('/user')
 @UseGuards(UserRoleGuard)
 @UseGuards(JwtAuthGuard)
 export class UserController {
@@ -56,42 +64,52 @@ export class UserController {
     private readonly langService: LangService,
   ) {}
 
-  @Post('create')
+  @Post('/create')
   @HttpCode(HttpStatus.CREATED)
   @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @UseInterceptors(
+    FileUploadInterceptor.prototype.uploadFile('avatar', IMG_MIMETYPE),
+  )
   async create(
-    @Body() data: CreateUserDto,
+    @Body() body: CreateUserDto,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<WebResponse<CreateUserResponseDto>> {
-    await this.validationService.validateAsync(createUserSchema, data);
+    const validateData = { ...body, avatar: file };
 
-    const newUser = await this.userService.create(data);
+    const validatedData = await this.validationService.validateAsync(
+      createUserSchema,
+      validateData,
+    );
+
+    const newUser = await this.userService.create(validatedData);
 
     return {
       error: false,
-      message: 'OK',
+      message: this.langService.t('response.ok'),
       data: newUser,
     };
   }
 
-  @Get()
+  @Get('/list')
   @HttpCode(HttpStatus.OK)
   @Roles(UserRole.ADMIN, UserRole.OWNER)
   async getDataPagination(
     @Query() query: any,
   ): Promise<WebResponse<GetManyUserResponseDto[]>> {
-    const pagination = this.validationService.validateAsync(
+    const pagination = await this.validationService.validateAsync(
       paginationSchema,
       query,
-    ) as Pagination;
+    );
 
     const users = await this.userService.getDataPagination(pagination);
+    const allUsers = await this.userService.getCountDataPagination(pagination);
 
     return {
       error: false,
-      message: 'OK',
+      message: this.langService.t('response.ok'),
       data: users,
       paging: {
-        total_pages: users.length / query.limit,
+        totalPages: Math.ceil(allUsers / query.limit),
         column: query.column,
         filters: query.filters,
         limit: query.limit,
@@ -102,24 +120,111 @@ export class UserController {
     };
   }
 
-  @Put()
+  @Get('/:userId/current')
+  @HttpCode(HttpStatus.OK)
+  async getUserByUserId(
+    @Param('userId') userId: any,
+    @AuthUser() user: JwtPayload,
+  ): Promise<WebResponse<any>> {
+    const validatedUserId = await this.validationService.validateAsync(
+      transformUserIdSchema,
+      userId,
+    );
+
+    if (user.role === UserRole.USER && user.sub !== validatedUserId) {
+      throw new ForbiddenException(this.langService.t('exception.forbidden'));
+    }
+
+    const data = await this.userService.getUserById(validatedUserId);
+
+    return {
+      error: false,
+      message: this.langService.t('response.ok'),
+      data: data,
+    };
+  }
+
+  @Put('/:userId/update')
   @HttpCode(HttpStatus.ACCEPTED)
   async update(
     @Body() body: UpdateUserDto,
     @AuthUser() user: JwtPayload,
+    @Param('userId') userId: any,
   ): Promise<WebResponse<UpdateUserResponseDto>> {
-    await this.validationService.validateAsync(updateUserSchema, body);
-
-    if (user.sub !== body.userId) {
+    if (user.role === UserRole.USER && user.sub !== userId) {
       throw new ForbiddenException(this.langService.t('exception.forbidden'));
     }
 
-    const updatedResponse = await this.userService.update(body);
+    const validated = await this.validationService.validateAsync(
+      updateUserSchema,
+      body,
+    );
+    const validatedUserId = await this.validationService.validateAsync(
+      transformUserIdSchema,
+      userId,
+    );
+
+    const updatedResponse = await this.userService.update(
+      validated,
+      validatedUserId,
+    );
 
     return {
       error: false,
-      message: 'OK',
+      message: this.langService.t('response.ok'),
       data: updatedResponse,
+    };
+  }
+
+  @Put('/:userId/update-avatar')
+  @HttpCode(HttpStatus.ACCEPTED)
+  @UseInterceptors(
+    FileUploadInterceptor.prototype.uploadFile('avatar', IMG_MIMETYPE),
+  )
+  async updateAvatar(
+    @Body() body: UpdateAvatarDto,
+    @AuthUser() user: JwtPayload,
+    @Param('userId') userId: any,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<WebResponse<UpdateAvatarResponse>> {
+    if (user.role === UserRole.USER && user.sub !== userId) {
+      throw new ForbiddenException(this.langService.t('exception.forbidden'));
+    }
+
+    const validated = await this.validationService.validateAsync(
+      updateAvatarSchema,
+      { avatar: file },
+    );
+    const validatedUserId = await this.validationService.validateAsync(
+      transformUserIdSchema,
+      userId,
+    );
+
+    const udpatedResponse = await this.userService.updateAvatar(
+      validated,
+      validatedUserId,
+    );
+
+    return {
+      error: false,
+      message: this.langService.t('response.ok'),
+      data: udpatedResponse,
+    };
+  }
+
+  @Delete('/:userId/delete')
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  async delete(@Param('userId') userId: any): Promise<WebResponse<any>> {
+    const validatedUserId = await this.validationService.validateAsync(
+      transformUserIdSchema,
+      userId,
+    );
+    const deletedUser = await this.userService.delete(validatedUserId);
+
+    return {
+      error: false,
+      message: this.langService.t('response.success'),
+      data: deletedUser.fullName,
     };
   }
 }
