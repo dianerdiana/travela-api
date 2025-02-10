@@ -84,7 +84,7 @@ export class UserRepository {
     });
   }
 
-  async update(userId: number, data) {
+  async update(userId: number, data: any) {
     return await this.prismaService.user.update({
       where: { id: userId },
       data,
