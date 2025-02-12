@@ -69,13 +69,13 @@ export class AuthService {
 
     const newUser = await this.userRepository.create({
       ...data,
-      avatar: imageKitFile.filePath,
       avatarId: imageKitFile.fileId,
       status: UserStatus[data.status.toUpperCase()],
       password,
     });
 
     await this.userRoleRepository.create(newUser.id, userRole.id);
+    await this.imageKitService.updateRelatedId(imageKitFile.fileId, newUser.id);
 
     return {
       id: newUser.id,

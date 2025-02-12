@@ -18,7 +18,7 @@ import { GetManyUserResponseDto } from './dto/get-many-user.dto';
 // Common
 import { Pagination } from '@common/types/pagination.type';
 import { UserStatus } from '@common/types/user-status.type';
-import { FOLDER_AVATAR } from '@common/constants/image-kit-folder.constant';
+import { FOLDER_IMAGEKIT } from '@common/constants/image-kit-folder.constant';
 
 // Lib
 import { PasswordService } from '@lib/password.service';
@@ -73,20 +73,20 @@ export class UserService {
 
     const imageKitFile = await this.imageKitService.uploadFile(
       data.avatar,
-      FOLDER_AVATAR,
+      FOLDER_IMAGEKIT.AVATAR,
     );
     const password = await this.passwordService.hashPassword(data.password);
     const userRole = await this.roleRepository.findRoleByName('user');
 
     const newUser = await this.userRepository.create({
       ...data,
-      avatar: imageKitFile.filePath,
       avatarId: imageKitFile.fileId,
       status: UserStatus[data.status.toUpperCase()],
       password,
     });
 
     await this.userRoleRepository.create(newUser.id, userRole.id);
+    await this.imageKitService.updateRelatedId(newUser.avatarId, newUser.id);
 
     return {
       id: newUser.id,
@@ -104,13 +104,24 @@ export class UserService {
     this.logger.log(`UserService.getDataPagination: ${JSON.stringify(paging)}`);
     const users = await this.userRepository.pagination(paging);
 
-    return users.map((item) => ({
-      id: item.id,
-      fullName: item.fullName,
-      phone: item.phone,
-      email: item.email,
-      username: item.username,
-    }));
+    const avatarIds = users.map((user) => user.avatarId);
+    const avatarUsers =
+      await this.imageKitService.getManyImageUrlByFileId(avatarIds);
+
+    return users.map((user) => {
+      const avatarUser = avatarUsers.find(
+        (avatar) => user.avatarId === avatar.fileId,
+      );
+
+      return {
+        id: user.id,
+        fullName: user.fullName,
+        phone: user.phone,
+        email: user.email,
+        username: user.username,
+        avatarUrl: avatarUser.url,
+      };
+    });
   }
 
   async getUserById(userId: number): Promise<any> {
@@ -133,7 +144,7 @@ export class UserService {
       phone: user.phone,
       email: user.email,
       username: user.username,
-      avatar: avatarUrl,
+      avatarUrl,
     };
   }
 
@@ -191,15 +202,14 @@ export class UserService {
 
     const imageKitResponse = await this.imageKitService.uploadFile(
       data.avatar,
-      FOLDER_AVATAR,
+      FOLDER_IMAGEKIT.AVATAR,
     );
 
     await this.userRepository.update(userId, {
-      avatar: imageKitResponse.filePath,
       avatarId: imageKitResponse.fileId,
     });
 
-    return imageKitResponse.fileUrl;
+    return imageKitResponse.url;
   }
 
   async delete(userId: number) {
@@ -215,6 +225,7 @@ export class UserService {
     }
 
     const deletedUser = await this.userRepository.delete(userId);
+
     return {
       id: deletedUser.id,
       fullName: deletedUser.fullName,

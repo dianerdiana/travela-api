@@ -15,7 +15,6 @@ datasource db {
 
 model User {
   id        Int       @id @default(autoincrement())
-  avatar    String
   avatarId  String
   fullName  String    @db.VarChar(255)
   username  String    @unique @db.VarChar(100)
@@ -33,7 +32,6 @@ model User {
 model Category {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(100)
-  icon      String?  @db.VarChar(255)
   iconId    String?
   slug      String   @unique @db.VarChar(100)
   status    String
@@ -47,8 +45,7 @@ model PackageTour {
   id            Int      @id @default(autoincrement())
   name          String   @db.VarChar(255)
   slug          String   @unique @db.VarChar(100)
-  thumbnail     String?  @db.VarChar(255)
-  thumbnailId   String
+  thumbnailId   String?  @db.VarChar(255)
   price         Decimal  @db.Decimal(10, 2)
   days          Int
   isRecommended Boolean  @default(false)
@@ -79,7 +76,6 @@ model PackageTourCategory {
 model PackagePhoto {
   id            Int      @id @default(autoincrement())
   packageTourId Int
-  photo         String   @db.VarChar(255)
   photoId       String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
@@ -92,7 +88,6 @@ model PackageBank {
   bankName          String   @db.VarChar(100)
   bankAccountName   String   @db.VarChar(255)
   bankAccountNumber String   @db.VarChar(20)
-  bankLogo          String?  @db.VarChar(255)
   bankLogoId        String?
   status            String
   createdAt         DateTime @default(now())
@@ -111,7 +106,6 @@ model PackageBooking {
   endDate         DateTime
   isPaid          Boolean   @default(false)
   totalAmount     Decimal   @db.Decimal(10, 2)
-  paymentProof    String    @db.VarChar(255)
   paymentProofId  String
   subTotal        Decimal   @db.Decimal(10, 2)
   insurance       Decimal   @db.Decimal(10, 2)
@@ -191,4 +185,19 @@ model TransactionAuditTrail {
   updatedAt        DateTime @default(now())
 
   @@map("transaction_audit_trail")
+}
+
+model ImageKit {
+  id        Int      @id @default(autoincrement())
+  fileId    String   @unique
+  fileName  String?
+  filePath  String
+  url       String
+  width     Int?
+  height    Int?
+  format    String?
+  size      Int? // Ukuran file dalam byte
+  type      String
+  relatedId Int? // ID user/kategori/destinasi terkait
+  createdAt DateTime @default(now())
 }
