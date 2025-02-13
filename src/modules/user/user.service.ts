@@ -108,7 +108,7 @@ export class UserService {
 
   async getUserById(userId: number): Promise<any> {
     this.logger.log(`UserService.getUserById: ${userId}`);
-    const user = await this.userRepository.findOne(userId);
+    const user = await this.userRepository.findUserById(userId);
 
     if (!user) {
       throw new BadRequestException(
@@ -138,7 +138,7 @@ export class UserService {
 
   async update(data: UpdateUserDto, userId: number): Promise<UpdateUserResponseDto> {
     this.logger.log(`UserService.update: ${JSON.stringify(data)}`);
-    const user = await this.userRepository.findOne(userId);
+    const user = await this.userRepository.findUserById(userId);
 
     if (!user) {
       throw new NotFoundException(
@@ -162,7 +162,7 @@ export class UserService {
   async updateAvatar(data: UpdateAvatarDto, userId: number): Promise<UpdateAvatarResponse> {
     this.logger.log(`UserService.updateAvatar: ${JSON.stringify(data)}`);
 
-    const user = await this.userRepository.findOne(userId);
+    const user = await this.userRepository.findUserById(userId);
 
     if (!user) {
       throw new NotFoundException(
@@ -188,7 +188,7 @@ export class UserService {
 
   async delete(userId: number) {
     this.logger.log(`UserService.delete: ${JSON.stringify(userId)}`);
-    const user = await this.userRepository.findOne(userId);
+    const user = await this.userRepository.findUserById(userId);
 
     if (!user) {
       throw new NotFoundException(

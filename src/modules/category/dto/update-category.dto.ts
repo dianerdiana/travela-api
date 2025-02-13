@@ -11,8 +11,8 @@ export const updateCategoryResponse = z.object({
   id: z.number(),
   name: z.string(),
   slug: z.string(),
-  iconUrl: z.string(),
+  status: z.string(),
 });
 
 export type UpdateCategoryDto = z.infer<typeof updateCategorySchema>;
-export type UpdateCategoryResponse = z.infer<typeof updateCategoryResponse>;
+export type UpdateCategoryResponseDto = z.infer<typeof updateCategoryResponse>;

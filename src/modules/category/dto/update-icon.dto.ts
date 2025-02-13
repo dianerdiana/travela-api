@@ -12,4 +12,4 @@ export const updateIconSchema = z.object({
 });
 
 export type UpdateIconDto = z.infer<typeof updateIconSchema>;
-export type UpdateIconResponse = string;
+export type UpdateIconResponseDto = string;

@@ -60,7 +60,7 @@ export class UserRepository {
     });
   }
 
-  async findOne(userId: number) {
+  async findUserById(userId: number) {
     return await this.prismaService.user.findUnique({
       where: { id: userId },
     });

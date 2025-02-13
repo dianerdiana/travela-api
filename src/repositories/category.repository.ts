@@ -20,6 +20,16 @@ export class CategoryRepository {
     });
   }
 
+  async findManyCategoryById(categoryIds: number[]) {
+    return await this.prismaService.category.findMany({
+      where: {
+        id: {
+          in: categoryIds,
+        },
+      },
+    });
+  }
+
   async pagination(data: Pagination) {
     const { column, filters, limit, page, search, sort } = data;
 
@@ -50,7 +60,7 @@ export class CategoryRepository {
     });
   }
 
-  async updateCategory(data: any, categoryId: number) {
+  async updateCategory(categoryId: number, data: any) {
     return await this.prismaService.category.update({
       data,
       where: { id: categoryId },

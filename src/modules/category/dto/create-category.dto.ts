@@ -20,4 +20,4 @@ export const createCategoryResponse = z.object({
 });
 
 export type CreateCategoryDto = z.infer<typeof createCategorySchema>;
-export type CreateCategoryResponse = z.infer<typeof createCategoryResponse>;
+export type CreateCategoryResponseDto = z.infer<typeof createCategoryResponse>;
