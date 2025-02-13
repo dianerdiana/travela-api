@@ -15,10 +15,7 @@ import { authConfig } from './auth.config';
         const parsed = envSchema.safeParse(config);
         if (!parsed.success) {
           // Jika validasi gagal, lempar error
-          console.error(
-            'Environment variables validation failed:',
-            parsed.error.format(),
-          );
+          console.error('Environment variables validation failed:', parsed.error.format());
           throw new Error('Invalid environment variables');
         }
         return parsed.data; // Jika validasi sukses, return hasilnya

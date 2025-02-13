@@ -13,11 +13,7 @@ export class ImageKitService {
 
   constructor(private readonly prismaService: PrismaService) {}
 
-  async uploadFile(
-    file: Express.Multer.File,
-    folderName: string,
-    relatedId?: number,
-  ) {
+  async uploadFile(file: Express.Multer.File, folderName: string, relatedId?: number) {
     const response = await this.imagekit.upload({
       file: file.buffer,
       fileName: file.originalname,

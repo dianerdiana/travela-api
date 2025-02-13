@@ -8,6 +8,4 @@ export const getManyCategoryResponse = z.object({
   status: z.string(),
 });
 
-export type GetManyCategoryResponseDto = z.infer<
-  typeof getManyCategoryResponse
->;
+export type GetManyCategoryResponseDto = z.infer<typeof getManyCategoryResponse>;

@@ -20,22 +20,10 @@ import {
 import { UserService } from './user.service';
 
 // Dto
-import {
-  CreateUserDto,
-  CreateUserResponseDto,
-  createUserSchema,
-} from './dto/create-user.dto';
+import { CreateUserDto, CreateUserResponseDto, createUserSchema } from './dto/create-user.dto';
 import { GetManyUserResponseDto } from './dto/get-many-user.dto';
-import {
-  UpdateUserDto,
-  UpdateUserResponseDto,
-  updateUserSchema,
-} from './dto/update-user.dto';
-import {
-  UpdateAvatarDto,
-  UpdateAvatarResponse,
-  updateAvatarSchema,
-} from './dto/update-avatar.dto';
+import { UpdateUserDto, UpdateUserResponseDto, updateUserSchema } from './dto/update-user.dto';
+import { UpdateAvatarDto, UpdateAvatarResponse, updateAvatarSchema } from './dto/update-avatar.dto';
 import { transformUserIdSchema } from './dto/transform-user-id.dto';
 
 // Lib
@@ -67,9 +55,7 @@ export class UserController {
   @Post('/create')
   @HttpCode(HttpStatus.CREATED)
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @UseInterceptors(
-    FileUploadInterceptor.prototype.uploadFile('avatar', IMG_MIMETYPE),
-  )
+  @UseInterceptors(FileUploadInterceptor.prototype.uploadFile('avatar', IMG_MIMETYPE))
   async create(
     @Body() body: CreateUserDto,
     @UploadedFile() file: Express.Multer.File,
@@ -93,13 +79,8 @@ export class UserController {
   @Get('/list')
   @HttpCode(HttpStatus.OK)
   @Roles(UserRole.ADMIN, UserRole.OWNER)
-  async getDataPagination(
-    @Query() query: any,
-  ): Promise<WebResponse<GetManyUserResponseDto[]>> {
-    const pagination = await this.validationService.validateAsync(
-      paginationSchema,
-      query,
-    );
+  async getDataPagination(@Query() query: any): Promise<WebResponse<GetManyUserResponseDto[]>> {
+    const pagination = await this.validationService.validateAsync(paginationSchema, query);
 
     const users = await this.userService.getDataPagination(pagination);
     const allUsers = await this.userService.getCountDataPagination(pagination);
@@ -155,19 +136,13 @@ export class UserController {
       throw new ForbiddenException(this.langService.t('exception.forbidden'));
     }
 
-    const validated = await this.validationService.validateAsync(
-      updateUserSchema,
-      body,
-    );
+    const validated = await this.validationService.validateAsync(updateUserSchema, body);
     const validatedUserId = await this.validationService.validateAsync(
       transformUserIdSchema,
       userId,
     );
 
-    const updatedResponse = await this.userService.update(
-      validated,
-      validatedUserId,
-    );
+    const updatedResponse = await this.userService.update(validated, validatedUserId);
 
     return {
       error: false,
@@ -178,9 +153,7 @@ export class UserController {
 
   @Put('/:userId/update-avatar')
   @HttpCode(HttpStatus.ACCEPTED)
-  @UseInterceptors(
-    FileUploadInterceptor.prototype.uploadFile('avatar', IMG_MIMETYPE),
-  )
+  @UseInterceptors(FileUploadInterceptor.prototype.uploadFile('avatar', IMG_MIMETYPE))
   async updateAvatar(
     @Body() body: UpdateAvatarDto,
     @AuthUser() user: JwtPayload,
@@ -191,19 +164,15 @@ export class UserController {
       throw new ForbiddenException(this.langService.t('exception.forbidden'));
     }
 
-    const validated = await this.validationService.validateAsync(
-      updateAvatarSchema,
-      { avatar: file },
-    );
+    const validated = await this.validationService.validateAsync(updateAvatarSchema, {
+      avatar: file,
+    });
     const validatedUserId = await this.validationService.validateAsync(
       transformUserIdSchema,
       userId,
     );
 
-    const udpatedResponse = await this.userService.updateAvatar(
-      validated,
-      validatedUserId,
-    );
+    const udpatedResponse = await this.userService.updateAvatar(validated, validatedUserId);
 
     return {
       error: false,

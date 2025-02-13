@@ -9,7 +9,6 @@ export class UserRepository {
   async create(data: RegisterDto & { avatarId: string }) {
     return await this.prismaService.user.create({
       data: {
-        avatar: data.avatar,
         avatarId: data.avatarId,
         fullName: data.fullName,
         username: data.username,

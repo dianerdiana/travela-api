@@ -16,10 +16,7 @@ export class FileUploadInterceptor {
       storage: memoryStorage(), // Simpan di buffer agar bisa dikirim ke ImageKit
       fileFilter: (req, file, cb) => {
         if (allowedTypes.length > 0 && !allowedTypes.includes(file.mimetype)) {
-          return cb(
-            new BadRequestException(this.langService.t('invalid_file_type')),
-            false,
-          );
+          return cb(new BadRequestException(this.langService.t('invalid_file_type')), false);
         }
         cb(null, true);
       },

@@ -37,12 +37,8 @@ export class AuthService {
   async register(data: RegisterDto): Promise<RegisterResponseDto> {
     this.logger.log(`AuthService.register: ${data}`);
 
-    const existEmail = await this.userRepository.findUserByEmailOrUsername(
-      data.email,
-    );
-    const existUsername = await this.userRepository.findUserByEmailOrUsername(
-      data.username,
-    );
+    const existEmail = await this.userRepository.findUserByEmailOrUsername(data.email);
+    const existUsername = await this.userRepository.findUserByEmailOrUsername(data.username);
 
     if (existEmail) {
       throw new BadRequestException(
@@ -60,10 +56,7 @@ export class AuthService {
       );
     }
 
-    const imageKitFile = await this.imageKitService.uploadFile(
-      data.avatar,
-      'avatar',
-    );
+    const imageKitFile = await this.imageKitService.uploadFile(data.avatar, 'avatar');
     const password = await this.passwordService.hashPassword(data.password);
     const userRole = await this.roleRepository.findRoleByName('user');
 
@@ -90,14 +83,10 @@ export class AuthService {
   async login(data: LoginDto): Promise<LoginResponseDto> {
     this.logger.log(`AuthService.login: ${data}`);
 
-    const user = await this.userRepository.findUserByEmailOrUsername(
-      data.username,
-    );
+    const user = await this.userRepository.findUserByEmailOrUsername(data.username);
 
     if (!user) {
-      throw new BadRequestException(
-        this.langService.t('exception.login_failed'),
-      );
+      throw new BadRequestException(this.langService.t('exception.login_failed'));
     }
 
     const comparedPassword = await this.passwordService.comparePassword(
@@ -106,14 +95,10 @@ export class AuthService {
     );
 
     if (!comparedPassword) {
-      throw new BadRequestException(
-        this.langService.t('exception.login_failed'),
-      );
+      throw new BadRequestException(this.langService.t('exception.login_failed'));
     }
 
-    const userRole = await this.userRoleRepository.findUserRoleByUserId(
-      user.id,
-    );
+    const userRole = await this.userRoleRepository.findUserRoleByUserId(user.id);
     const role = await this.roleRepository.findRoleById(userRole.roleId);
 
     const tokenPayload: JwtPayload = {

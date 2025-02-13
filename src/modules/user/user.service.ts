@@ -1,9 +1,5 @@
 // NestJs
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
 // Repository
 import { UserRepository } from './repository/user.repository';
@@ -42,12 +38,8 @@ export class UserService {
   async create(data: CreateUserDto): Promise<CreateUserResponseDto> {
     this.logger.log(`AuthService.register: ${data}`);
 
-    const existEmail = await this.userRepository.findUserByEmailOrUsername(
-      data.email,
-    );
-    const existUsername = await this.userRepository.findUserByEmailOrUsername(
-      data.username,
-    );
+    const existEmail = await this.userRepository.findUserByEmailOrUsername(data.email);
+    const existUsername = await this.userRepository.findUserByEmailOrUsername(data.username);
 
     if (existEmail) {
       throw new BadRequestException(
@@ -66,15 +58,10 @@ export class UserService {
     }
 
     if (data.confirmPassword !== data.password) {
-      throw new BadRequestException(
-        this.langService.t('exception.confirm_password_invalid'),
-      );
+      throw new BadRequestException(this.langService.t('exception.confirm_password_invalid'));
     }
 
-    const imageKitFile = await this.imageKitService.uploadFile(
-      data.avatar,
-      FOLDER_IMAGEKIT.AVATAR,
-    );
+    const imageKitFile = await this.imageKitService.uploadFile(data.avatar, FOLDER_IMAGEKIT.AVATAR);
     const password = await this.passwordService.hashPassword(data.password);
     const userRole = await this.roleRepository.findRoleByName('user');
 
@@ -98,20 +85,15 @@ export class UserService {
     };
   }
 
-  async getDataPagination(
-    paging: Pagination,
-  ): Promise<GetManyUserResponseDto[]> {
+  async getDataPagination(paging: Pagination): Promise<GetManyUserResponseDto[]> {
     this.logger.log(`UserService.getDataPagination: ${JSON.stringify(paging)}`);
     const users = await this.userRepository.pagination(paging);
 
     const avatarIds = users.map((user) => user.avatarId);
-    const avatarUsers =
-      await this.imageKitService.getManyImageUrlByFileId(avatarIds);
+    const avatarUsers = await this.imageKitService.getManyImageUrlByFileId(avatarIds);
 
     return users.map((user) => {
-      const avatarUser = avatarUsers.find(
-        (avatar) => user.avatarId === avatar.fileId,
-      );
+      const avatarUser = avatarUsers.find((avatar) => user.avatarId === avatar.fileId);
 
       return {
         id: user.id,
@@ -149,17 +131,12 @@ export class UserService {
   }
 
   async getCountDataPagination(paging: Pagination): Promise<number> {
-    this.logger.log(
-      `UserService.getTotalDataPagination: ${JSON.stringify(paging)}`,
-    );
+    this.logger.log(`UserService.getTotalDataPagination: ${JSON.stringify(paging)}`);
 
     return await this.userRepository.paginationCount(paging);
   }
 
-  async update(
-    data: UpdateUserDto,
-    userId: number,
-  ): Promise<UpdateUserResponseDto> {
+  async update(data: UpdateUserDto, userId: number): Promise<UpdateUserResponseDto> {
     this.logger.log(`UserService.update: ${JSON.stringify(data)}`);
     const user = await this.userRepository.findOne(userId);
 
@@ -182,10 +159,7 @@ export class UserService {
     };
   }
 
-  async updateAvatar(
-    data: UpdateAvatarDto,
-    userId: number,
-  ): Promise<UpdateAvatarResponse> {
+  async updateAvatar(data: UpdateAvatarDto, userId: number): Promise<UpdateAvatarResponse> {
     this.logger.log(`UserService.updateAvatar: ${JSON.stringify(data)}`);
 
     const user = await this.userRepository.findOne(userId);
@@ -235,10 +209,7 @@ export class UserService {
 
   async deleteMany(userIds: number[]) {
     this.logger.log(`UserService.deleteMany: ${JSON.stringify(userIds)}`);
-    const users = await this.userRepository.findManyBasedOnColumn(
-      'id',
-      userIds,
-    );
+    const users = await this.userRepository.findManyBasedOnColumn('id', userIds);
 
     if (users.length !== userIds.length) {
       throw new NotFoundException(

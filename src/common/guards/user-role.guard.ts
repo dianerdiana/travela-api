@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '@common/constants/role.constant';
 import { UserRole } from '@common/types/user-role.type';
@@ -19,10 +14,7 @@ export class UserRoleGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     // Get the required roles from the metadata
-    const requiredRoles = this.reflector.get<UserRole[]>(
-      ROLES_KEY,
-      context.getHandler(),
-    );
+    const requiredRoles = this.reflector.get<UserRole[]>(ROLES_KEY, context.getHandler());
     if (!requiredRoles) {
       return true; // No roles are required, allow access
     }
