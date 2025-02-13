@@ -3,9 +3,9 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 // Repository
-import { RoleRepository } from './repositories/role.repository';
-import { UserRepository } from './repositories/user.repository';
-import { UserRoleRepository } from './repositories/user-role.repository';
+import { RoleRepository } from '@repositories/role.repository';
+import { UserRepository } from '@repositories/user.repository';
+import { UserRoleRepository } from '@repositories/user-role.repository';
 
 // DTO
 import { RegisterDto, RegisterResponseDto } from './dto/register.dto';
@@ -54,6 +54,10 @@ export class AuthService {
           label: 'Username',
         }),
       );
+    }
+
+    if (data.confirmPassword !== data.password) {
+      throw new BadRequestException(this.langService.t('exception.confirm_password_invalid'));
     }
 
     const imageKitFile = await this.imageKitService.uploadFile(data.avatar, 'avatar');

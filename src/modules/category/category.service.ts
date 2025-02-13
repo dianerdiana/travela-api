@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 
 // Repository
-import { CategoryRepository } from './repository/category.repository';
+import { CategoryRepository } from '@repositories/category.repository';
 
 // Lib
 import { ValidationService } from '@lib/validation.service';
@@ -10,7 +10,12 @@ import { LangService } from '@lib/i18n/lang.service';
 import { CreateCategoryDto, CreateCategoryResponse } from './dto/create-category.dto';
 import { ImageKitService } from '@lib/image-kit.service';
 import { WinstonLoggerService } from '@lib/winston-logger.service';
+
+// Common
 import { generateSlug } from '@common/utils/generator.util';
+import { Pagination } from '@common/types/pagination.type';
+import { GetManyCategoryResponseDto } from './dto/get-category.dto';
+import { CategoryStatus } from '@common/types/category-status.type';
 
 @Injectable()
 export class CategoryService {
@@ -19,7 +24,7 @@ export class CategoryService {
     private readonly validationService: ValidationService,
     private readonly langService: LangService,
     private readonly imageKitService: ImageKitService,
-    private readonly loggger: WinstonLoggerService,
+    private readonly logger: WinstonLoggerService,
   ) {}
 
   async generateUniqueSlug(name: string, categoryId?: number): Promise<string> {
@@ -40,7 +45,7 @@ export class CategoryService {
   }
 
   async create(data: CreateCategoryDto): Promise<CreateCategoryResponse> {
-    this.loggger.log(`CategoryService.create: ${JSON.stringify(data)}`);
+    this.logger.log(`CategoryService.create: ${JSON.stringify(data)}`);
 
     const uniqueSlug = await this.generateUniqueSlug(data.name);
 
@@ -49,6 +54,7 @@ export class CategoryService {
       name: data.name,
       slug: uniqueSlug,
       iconId: newIcon.fileId,
+      status: CategoryStatus.ACTIVE,
     });
 
     await this.imageKitService.updateRelatedId(newCategory.iconId, newCategory.id);
@@ -61,5 +67,23 @@ export class CategoryService {
     };
   }
 
-  // async getDataPagination()
+  async getDataPagination(paging: Pagination): Promise<GetManyCategoryResponseDto[]> {
+    this.logger.log(`UserService.getDataPagination: ${JSON.stringify(paging)}`);
+    const categories = await this.categoryRepository.pagination(paging);
+
+    const iconIds = categories.map((category) => category.iconId);
+    const categoryIcons = await this.imageKitService.getManyImageUrlByFileId(iconIds);
+
+    return categories.map((category) => {
+      const categoryIcon = categoryIcons.find((icon) => category.iconId === icon.fileId);
+
+      return {
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        status: category.status,
+        iconUrl: categoryIcon.url,
+      };
+    });
+  }
 }

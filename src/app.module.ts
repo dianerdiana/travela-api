@@ -3,13 +3,14 @@ import { CommonModule } from './common/common.module';
 import { LibModule } from '@lib/lib.module';
 import { AppController } from './app.controller';
 import { MyConfigModule } from './config/config.module';
+import { RepositoryModule } from '@repositories/module.respository';
 
 // API Modules
-import { AuthModule } from '@modules/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
-  imports: [CommonModule, LibModule, MyConfigModule, AuthModule, UserModule],
+  imports: [CommonModule, LibModule, MyConfigModule, RepositoryModule, AuthModule, UserModule],
   controllers: [AppController],
 })
 export class AppModule {}

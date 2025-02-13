@@ -23,8 +23,9 @@
       "@config/*": ["./src/config/*"],
       "@common/*": ["./src/common/*"],
       "@core/*": ["./src/core/*"],
-      "@modules/*": ["./src/modules/*"],
-      "@lib/*": ["./src/lib/*"]
+      "@module/*": ["./src/module/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@repositories/*": ["./src/repositories/*"]
     },
 
     "esModuleInterop": true
