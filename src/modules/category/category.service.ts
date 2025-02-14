@@ -67,7 +67,6 @@ export class CategoryService {
       id: newCategory.id,
       name: newCategory.name,
       slug: newCategory.slug,
-      iconUrl: newCategory.iconId,
     };
   }
 

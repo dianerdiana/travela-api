@@ -16,7 +16,6 @@ export const createCategoryResponse = z.object({
   id: z.number(),
   name: z.string(),
   slug: z.string(),
-  iconUrl: z.string(),
 });
 
 export type CreateCategoryDto = z.infer<typeof createCategorySchema>;
