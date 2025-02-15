@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const updateIconSchema = z.object({
+export const updateThumbnailSchema = z.object({
   icon: z
     .any()
     .refine((file) => file && file.mimetype.startsWith('image/'), {
@@ -11,5 +11,5 @@ export const updateIconSchema = z.object({
     }),
 });
 
-export type UpdateIconDto = z.infer<typeof updateIconSchema>;
-export type UpdateIconResponseDto = string;
+export type UpdateThumbnailDto = z.infer<typeof updateThumbnailSchema>;
+export type UpdateThumbnailResponseDto = string;

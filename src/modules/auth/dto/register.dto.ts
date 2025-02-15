@@ -5,10 +5,10 @@ export const registerSchema = z.object({
   avatar: z
     .any()
     .refine((file) => file && file.mimetype.startsWith('image/'), {
-      message: 'File harus berupa gambar',
+      message: 'File must be an image.',
     })
     .refine((file) => file && file.size <= 2 * 1024 * 1024, {
-      message: 'Ukuran file maksimal 2MB',
+      message: 'Max file size is 2MB.',
     }),
   fullName: z.string().min(3),
   phone: z.string().min(10),
